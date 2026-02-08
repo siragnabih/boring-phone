@@ -1,0 +1,7 @@
+# Logs are local — don't commit your package lists
+boring-phone-logs/
+redmi-debloat-logs/
+
+# OS junk
+.DS_Store
+Thumbs.db
