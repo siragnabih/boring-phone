@@ -1,14 +1,19 @@
-# Boring Phone
+# Boring Phone (Proyecto Vorágine)
 
-Make your Android phone boring on purpose.
+Get a cheap Android phone, and make it boring on purpose.
 
-This is a one-command setup that strips your phone down to calls, messages, WhatsApp, Gmail, camera, and maps. No browser. No YouTube. No social media. No Xiaomi bloatware. No willpower required.
+This is a one-command setup that strips a Xiaomi phone down to calls, messages, WhatsApp, Gmail, camera, and maps. No browser. No YouTube. No social media. No Xiaomi bloatware. No willpower required.
+
+It will still keep the Play Store, as you should spend a few of days with your new setup to assess which apps you've probably forgotten were necessary (bank, library, gym, etc.). There are instructions below to disable it afterwards.'
+
+This project is called Proyecto Vorágine (Whirpool Project) because it seems fitting and M. decided so. 
 
 ## Why
 
-You already know your phone is a problem. You've tried Screen Time limits, grayscale mode, app timers, digital wellbeing dashboards. They all fail because they rely on you — in a moment of weakness, at 11pm, tired — choosing not to tap "ignore limit." That's not a system. That's a prayer.
+For those of us that realistically need certain apps (Whatsapp, Maps, Gmail) and don't want to spend 1000$ in a performative minimalistic phone. 
+Just get a cheap Xiaomi (this script was tested with a 160 euro Redmi 15) and remove all the bloatware and toxic apps from it. 
 
-This approach is different. It removes the apps at the system level. There is no browser to open. There is no "just 5 minutes" of YouTube. The slot machines are not on the device. To get them back, you'd need to find your laptop, open a terminal, and type a command. That's enough friction to stop every impulsive reinstall while keeping everything fully reversible.
+Willpower is overrated. This approach is different. It removes the apps at the system level. There is no browser to open. There is no "just 5 minutes" of YouTube. You'd need to find your laptop, open a terminal, and type a command. That's enough friction to stop every impulsive reinstall while keeping everything fully reversible.
 
 **The principle: put progress on rails instead of relying on discipline.**
 

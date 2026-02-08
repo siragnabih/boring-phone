@@ -1,6 +1,6 @@
 #!/bin/bash
 # Boring Phone — Debloat Script (Mac/Linux)
-# https://github.com/YOUR_USERNAME/boring-phone
+# https://github.com/siragnabih/boring-phone
 #
 # Usage: bash debloat.sh
 # Tested on: Redmi Note 15 (HyperOS 2 / Android 15)

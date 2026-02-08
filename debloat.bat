@@ -1,6 +1,6 @@
 @echo off
 REM Boring Phone — Debloat Script (Windows)
-REM https://github.com/YOUR_USERNAME/boring-phone
+REM https://github.com/siragnabih/boring-phone
 REM
 REM Usage: double-click or run from cmd: debloat.bat
 REM Tested on: Redmi Note 15 (HyperOS 2 / Android 15)
