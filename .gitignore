@@ -9,7 +9,6 @@ Thumbs.db
 # Hosted site build (web/)
 web/node_modules/
 web/dist/
-/dist/
 
 # Local tool settings (Claude Code test setup) — never publish
 .claude/

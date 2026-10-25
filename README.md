@@ -4,6 +4,8 @@ Get a cheap Android phone, and make it boring on purpose.
 
 This is a one-command setup that strips an Android phone (Xiaomi, Samsung, or Pixel) down to calls, messages, WhatsApp, Gmail, camera, and maps. No browser. No YouTube. No social media. No manufacturer bloatware. No willpower required.
 
+**Fastest way: [boring-phone-kxhc.vercel.app](https://boring-phone-kxhc.vercel.app)** — open it in Chrome or Edge on a computer, plug in the phone, and follow the steps. Nothing to install. (Details in [The Website Version](#the-website-version).)
+
 It still keeps the Play Store, because you should spend a few days with your new setup to find the apps you forgot you need (bank, library, gym, etc.). There are instructions below to disable it afterwards.
 
 This project is called Proyecto Vorágine (Whirlpool Project) because it seems fitting and M. decided so.
@@ -319,7 +321,7 @@ The code is in [`web/`](web/): it builds [`ui/index.html`](ui/index.html), the s
 
 1. Push the repo to GitHub.
 2. On [vercel.com](https://vercel.com), **Add New → Project** and import the repo.
-3. Keep the defaults. [`vercel.json`](vercel.json) already sets the install command, build command, and output folder. They work whether the Root Directory is left empty or set to `web` (Vercel suggests `web` because it finds Vite there).
+3. Set **Root Directory** to `web` (Vercel suggests it, because it finds Vite there) and keep the other defaults. [`web/vercel.json`](web/vercel.json) sets the install and build commands, the output folder, and the security headers. Vercel only reads it from inside the Root Directory.
 4. **Deploy.** Every push to `main` redeploys.
 
 To work on it locally:

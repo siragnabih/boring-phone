@@ -48,7 +48,10 @@ const PROTECTED = new Set([
 
 const manager = AdbDaemonWebUsbDeviceManager.BROWSER;
 const credentials = new AdbWebCredentialStore("Clean Phone");
-let status = manager ? { state: "none" } : { state: "unsupported" };
+// A link shared on WhatsApp usually gets opened on a phone, which can't plug into itself.
+// (Android's Chrome has WebUSB, iPhones don't; either way the page should send them to a computer.)
+const onPhone = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+let status = onPhone ? { state: "on-phone" } : manager ? { state: "none" } : { state: "unsupported" };
 let adb = null;
 let usbDevice = null;
 
@@ -125,7 +128,7 @@ function dropped(device) {
   setStatus({ state: "none" });
 }
 
-if (manager) {
+if (manager && !onPhone) {
   // A phone this browser was already allowed to use connects without the picker.
   navigator.usb.getDevices().then((devices) => {
     const phone = devices.find(hasAdbInterface);

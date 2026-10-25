@@ -427,6 +427,16 @@
   .brand-chip:hover { border-color: var(--ink-2); color: var(--ink); }
   .brand-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 
+  /* --- intro --- */
+  .lede { margin: 22px 0 0; max-width: 60ch; font-size: 17px; line-height: 1.55; color: var(--ink-2); }
+  .pitch { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .pitch li { border-top: 1px solid var(--rule); padding-top: 10px; font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+  .pitch strong { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+  .intro + .device { margin-top: 26px; }
+  @media (max-width: 600px) {
+    .pitch { grid-template-columns: 1fr; gap: 10px; }
+  }
+
   /* --- preview before a phone is connected --- */
   .preview-label {
     margin: 46px 0 0;
@@ -498,6 +508,8 @@
     .about-grid { grid-template-columns: 1fr; }
     .about-commands td:first-child { white-space: normal; }
     .lang .how { display: none; }
+    /* On a phone the language switch gets its own line, above the kicker. */
+    .lang { position: static; justify-content: flex-end; margin: -6px -8px 6px 0; }
   }
 </style>
 </head>
@@ -510,6 +522,7 @@
     </nav>
     <p class="kicker">Clean Phone · Proyecto Vorágine</p>
     <h1 data-i18n="title"></h1>
+    <div class="intro" id="intro"></div>
     <p class="device" id="device"><span class="dot wait"></span><span data-i18n="looking"></span></p>
   </header>
 
@@ -740,11 +753,19 @@ const I18N = {
     "d.connecting": "Connecting",
     "d.unsupported": "Needs Chrome or Edge",
     "d.other": "Phone not ready",
+    "d.on-phone": "Open this on a computer",
+    "c.phone.h": "Open this on a computer.",
+    "c.phone.p": "It works by plugging the phone into a computer with a USB cable, so it can't run on the phone itself. Send yourself this link and open it in Chrome or Edge on a laptop or desktop.",
+    "c.phone.meanwhile": "While you have the phone in your hand, you can already get it ready:",
+    "share.button": "Send this link to my computer",
+    "share.copy": "Copy the link",
+    "share.copied": "Link copied",
     "nav.how": "How it works",
     "about.link": "What exactly does it do?",
     "preview.label": "<span class=\"badge\">Preview</span> This is what you'll see once your phone is connected. Nothing is ticked or removed until then.",
     "preview.bar": "<strong>Preview.</strong> Connect your phone to see its real apps.",
     "preview.go.local": "Plug in your phone",
+    "preview.bar.phone": "<strong>Preview.</strong> Open this on a computer to use it.",
     "preview.more": ({ n }) => `+ ${n} more`,
   },
   es: {
@@ -863,11 +884,19 @@ const I18N = {
     "d.connecting": "Conectando",
     "d.unsupported": "Necesita Chrome o Edge",
     "d.other": "El teléfono no está listo",
+    "d.on-phone": "Ábrelo en un ordenador",
+    "c.phone.h": "Ábrelo en un ordenador.",
+    "c.phone.p": "Funciona conectando el teléfono a un ordenador con un cable USB, así que no puede ejecutarse en el propio teléfono. Envíate este enlace y ábrelo en Chrome o Edge en un portátil o un sobremesa.",
+    "c.phone.meanwhile": "Ya que tienes el teléfono en la mano, puedes ir preparándolo:",
+    "share.button": "Enviarme este enlace",
+    "share.copy": "Copiar el enlace",
+    "share.copied": "Enlace copiado",
     "nav.how": "Cómo funciona",
     "about.link": "¿Qué hace exactamente?",
     "preview.label": "<span class=\"badge\">Vista previa</span> Esto es lo que verás cuando conectes el teléfono. No se marca ni se quita nada hasta entonces.",
     "preview.bar": "<strong>Vista previa.</strong> Conecta tu teléfono para ver sus apps de verdad.",
     "preview.go.local": "Conecta tu teléfono",
+    "preview.bar.phone": "<strong>Vista previa.</strong> Ábrelo en un ordenador para usarlo.",
     "preview.more": ({ n }) => `+ ${n} más`,
   },
 };
@@ -1032,11 +1061,58 @@ function renderAbout() {
   $("#about").innerHTML = ABOUT[lang](Boolean(backend()));
 }
 
+// What this is, for someone who just opened a link someone sent them.
+const INTRO = {
+  en: (hosted) => `
+    <p class="lede">Clean Phone removes the apps that eat your attention from an Android phone (browsers, social media, YouTube, games, the maker's ads and preinstalled junk) and keeps what you need: calls, WhatsApp, maps, the camera. For your own phone, or one you're setting up for your kid, a parent, or anyone who wants less noise.</p>
+    <ul class="pitch">
+      <li><strong>Free and open source.</strong> No accounts, no ads.</li>
+      ${hosted
+        ? `<li><strong>Nothing to install.</strong> Chrome or Edge on a computer, and a USB cable.</li>`
+        : `<li><strong>Runs on your computer.</strong> Through adb, with nothing sent anywhere.</li>`}
+      <li><strong>Reversible.</strong> Every app can come back with one click.</li>
+    </ul>`,
+  es: (hosted) => `
+    <p class="lede">Clean Phone quita de un móvil Android las apps que se comen tu atención (navegadores, redes sociales, YouTube, juegos, la publicidad del fabricante y el relleno que viene de serie) y deja lo que necesitas: llamadas, WhatsApp, mapas y la cámara. Para tu propio teléfono o para uno que preparas para tu hijo o hija, tus padres o cualquiera que quiera menos ruido.</p>
+    <ul class="pitch">
+      <li><strong>Gratis y de código abierto.</strong> Sin cuentas ni anuncios.</li>
+      ${hosted
+        ? `<li><strong>Sin instalar nada.</strong> Chrome o Edge en un ordenador y un cable USB.</li>`
+        : `<li><strong>Funciona en tu ordenador.</strong> Mediante adb, sin enviar nada a ningún sitio.</li>`}
+      <li><strong>Reversible.</strong> Cualquier app se puede recuperar con un clic.</li>
+    </ul>`,
+};
+
+function renderIntro() {
+  $("#intro").innerHTML = INTRO[lang](Boolean(backend()));
+}
+
+// People often open a shared link on their phone, where this can't run: let them send it to a computer.
+async function shareLink(button) {
+  const url = location.origin + location.pathname;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: document.title, url });
+    } catch {
+      // Closing the share sheet isn't an error worth showing.
+    }
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    button.textContent = t("share.copied");
+  } catch {
+    window.prompt(t("share.copy"), url);
+  }
+}
+const shareButton = () => `<p><button class="go" type="button" data-share>${navigator.share ? t("share.button") : t("share.copy")}</button></p>`;
+
 function applyStatic() {
   document.documentElement.lang = lang;
   for (const el of document.querySelectorAll("[data-i18n]")) el.innerHTML = t(el.dataset.i18n);
   for (const btn of document.querySelectorAll(".lang button")) btn.setAttribute("aria-pressed", btn.dataset.lang === lang);
   renderAbout();
+  renderIntro();
 }
 
 function setLang(next) {
@@ -1110,6 +1186,10 @@ const CONNECT = {
     ${connectButton()}`,
   busy: () => `<h2>${t("c.busy.h")}</h2><p>${t("c.busy.p")}</p>${connectButton()}`,
   connecting: () => `<h2>${t("c.connecting.h")}</h2><p>${t("c.connecting.p")}</p>`,
+  "on-phone": () => `<h2>${t("c.phone.h")}</h2><p>${t("c.phone.p")}</p>
+    ${shareButton()}
+    <p>${t("c.phone.meanwhile")}</p>
+    ${setupSteps()}`,
   unsupported: () => `<h2>${t("c.unsupported.h")}</h2><p>${t("c.unsupported.p")}</p>
     <p>${t("c.unsupported.local", { href: LOCAL_URL })}</p>`,
   error: (s) => `<h2>${t("c.error.h")}</h2><p>${t("c.error.p", { message: esc(s.message || t("c.error.generic")) })}</p>
@@ -1339,9 +1419,10 @@ function ticked() {
 
 function updateCount() {
   if (state.phone?.preview) {
-    $("#bar-text").innerHTML = t("preview.bar");
+    $("#bar-text").innerHTML = state.status.state === "on-phone" ? t("preview.bar.phone") : t("preview.bar");
     $("#go").disabled = false;
-    $("#go").textContent = backend() ? t("connect") : t("preview.go.local");
+    $("#go").textContent = state.status.state === "on-phone" ? (navigator.share ? t("share.button") : t("share.copy"))
+      : backend() ? t("connect") : t("preview.go.local");
     return;
   }
   const n = ticked().length;
@@ -1444,7 +1525,8 @@ $("#tab-phone").addEventListener("change", updateCount);
 $("#go").addEventListener("click", () => {
   if (state.phone?.preview) {
     // The website can open the browser's USB picker right away; the local page waits for a cable.
-    if (backend()) backend().connect();
+    if (state.status.state === "on-phone") shareLink($("#go"));
+    else if (backend()) backend().connect();
     else $("#connect").scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
@@ -1461,6 +1543,7 @@ $("#confirm").addEventListener("close", () => {
 $("#connect").addEventListener("click", (e) => {
   // The browser only shows its USB device picker in direct response to a click.
   if (e.target.closest("[data-connect]")) backend().connect();
+  if (e.target.closest("[data-share]")) shareLink(e.target.closest("[data-share]"));
   const chip = e.target.closest("[data-brand]");
   if (chip) {
     state.brand = chip.dataset.brand;
@@ -1476,6 +1559,7 @@ applyStatic();
 document.addEventListener("DOMContentLoaded", () => {
   if (backend()) backend().onChange = poll;
   renderAbout();
+  renderIntro();
   poll();
 });
 </script>
