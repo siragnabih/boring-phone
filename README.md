@@ -316,7 +316,7 @@ The code is in [`web/`](web/): it builds [`ui/index.html`](ui/index.html), the s
 
 1. Push the repo to GitHub.
 2. On [vercel.com](https://vercel.com), **Add New → Project** and import the repo.
-3. Keep the defaults. [`vercel.json`](vercel.json) already sets the install command, build command, and output folder.
+3. Keep the defaults. [`vercel.json`](vercel.json) already sets the install command, build command, and output folder. They work whether the Root Directory is left empty or set to `web` (Vercel suggests `web` because it finds Vite there).
 4. **Deploy.** Every push to `main` redeploys.
 
 To work on it locally:

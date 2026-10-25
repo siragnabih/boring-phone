@@ -9,3 +9,4 @@ Thumbs.db
 # Hosted site build (web/)
 web/node_modules/
 web/dist/
+/dist/
