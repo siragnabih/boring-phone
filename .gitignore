@@ -10,3 +10,6 @@ Thumbs.db
 web/node_modules/
 web/dist/
 /dist/
+
+# Local tool settings (Claude Code test setup) — never publish
+.claude/
