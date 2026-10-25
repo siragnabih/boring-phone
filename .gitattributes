@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Batch files break in odd ways (labels, call :x) with LF endings, so check them out as CRLF.
+*.bat text eol=crlf
+*.sh text eol=lf
+lists/*.txt text eol=lf

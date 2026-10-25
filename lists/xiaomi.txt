@@ -1,0 +1,76 @@
+# Boring Phone — Stage 2: Xiaomi / Redmi / POCO bloatware
+#
+# Both debloat.sh and debloat.bat read this file.
+# Format: <package>  <label>
+# To KEEP an app, put a # in front of its line.
+# Packages that aren't on your phone are skipped, so a long list is harmless.
+# Labels: plain text only (no ! % ^ & | < > characters — they break the Windows script).
+#
+# Everything active below is rated "Recommended" (safe) by the Universal Android
+# Debloater community list: https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation
+# The commented-out lines at the bottom are riskier. Uncomment them only if you know you want them gone.
+
+## Ads and telemetry
+com.miui.msa.global                        Xiaomi ad engine (MSA)
+com.miui.systemAdSolution                  System Ad Solution
+com.miui.analytics                         Xiaomi Analytics
+com.miui.daemon                            MIUI Daemon (telemetry)
+com.miui.misightservice                    MiSight (telemetry)
+com.miui.miservice                         Services and feedback
+com.miui.bugreport                         Mi Feedback / bug reports
+com.miui.klo.bugreport                     KLO bug reports
+
+## Feeds, stores and recommendations
+com.xiaomi.mipicks                         GetApps (Xiaomi app store)
+com.mi.globalminusscreen                   App Vault
+com.mi.android.globalminusscreen           App Vault (alt package)
+com.miui.personalassistant                 App Vault (China package)
+com.mi.android.globalpersonalassistant     Mi Vault assistant
+com.mi.globalTrendNews                     Xiaomi news feed
+com.miui.newhome                           Content Service
+com.miui.contentcatcher                    Application Extension Service
+com.miui.catcherpatch                      Application Extension Service patch
+com.miui.hybrid                            Quick Apps
+com.miui.hybrid.accessory                  Quick Apps accessory
+com.mi.global.shop                         Xiaomi Store
+com.mi.global.bbs                          Mi Community
+com.mi.global.pocostore                    POCO Store
+com.mi.global.pocobbs                      POCO Community
+com.glance.internet                        Glance lock-screen stories
+
+## Media
+com.miui.videoplayer                       Mi Video
+com.miui.video                             Mi Video (alt package)
+com.miui.player                            Mi Music
+com.miui.android.fashiongallery            Wallpaper Carousel
+com.mfashiongallery.emag                   Wallpapers by Xiaomi
+
+## Games
+com.xiaomi.gamecenter                      Game Center
+com.xiaomi.gamecenter.sdk.service          Game Center SDK
+com.xiaomi.glgm                            Xiaomi Games
+
+## Money and loans
+com.miui.nextpay                           Mi Pay smart cards
+com.mipay.wallet.in                        Mi Pay (India)
+com.mipay.wallet.id                        Mi Pay (Indonesia)
+com.xiaomi.payment                         Mi Credit (old package)
+com.micredit.in                            Mi Credit
+
+## Misc
+com.miui.voiceassist                       Mi AI voice assistant (China)
+com.miui.yellowpage                        Yellow Pages
+com.xiaomi.midrop                          ShareMe / Mi Drop
+com.miui.cleaner                           Cleaner (shows ads)
+com.xiaomi.mirecycle                       Mi Recycle
+cn.wps.xiaomi.abroad.lite                  Mi Doc Viewer (WPS)
+
+## Partner apps preloaded by Xiaomi
+com.booking                                Booking.com
+com.tripadvisor.tripadvisor                Tripadvisor
+com.amazon.appmanager                      Amazon device info provider
+com.opera.max.oem                          Opera Max
+
+## Riskier — off by default. Remove the leading # to include them.
+# com.xiaomi.joyose                        Joyose (performance and thermal profiles; rated Expert, can affect refresh rate)
+# com.xiaomi.aicr                          Xiaomi AI Engine (rated Advanced, may break setting wallpapers)

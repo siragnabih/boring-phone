@@ -1,0 +1,82 @@
+# Boring Phone — Stage 1: distraction sources
+#
+# Both debloat.sh and debloat.bat read this file.
+# Format: <package>  <label>
+# To KEEP an app, put a # in front of its line.
+# Packages that aren't on your phone are skipped, so a long list is harmless.
+# Labels: plain text only (no ! % ^ & | < > characters — they break the Windows script).
+
+## Browsers
+com.mi.globalbrowser                       Mi Browser
+com.mi.globalbrowser.mini                  Mint Browser
+com.android.browser                        Mi Browser (old package)
+com.android.chrome                         Chrome
+com.opera.browser                          Opera
+com.opera.mini.native                      Opera Mini
+com.opera.preinstall                       Opera preinstall stub
+com.UCMobile.intl                          UC Browser
+com.microsoft.emmx                         Microsoft Edge
+org.mozilla.firefox                        Firefox
+com.brave.browser                          Brave
+com.duckduckgo.mobile.android              DuckDuckGo
+com.kiwibrowser.browser                    Kiwi Browser
+
+## Search, feeds and AI chat (each one is a browser by another name)
+com.google.android.googlequicksearchbox    Google app (Search, Discover, Assistant, Circle to Search)
+com.google.android.apps.bard               Gemini
+com.google.ar.lens                         Google Lens
+com.google.android.apps.magazines          Google News
+com.flipboard.app                          Flipboard
+com.flipboard.boxer.app                    Flipboard Briefing
+
+## Video and music streaming
+com.google.android.youtube                 YouTube
+com.google.android.apps.youtube.music      YouTube Music
+com.google.android.apps.youtube.kids       YouTube Kids
+com.google.android.videos                  Google TV
+com.netflix.mediaclient                    Netflix
+com.netflix.partner.activation             Netflix partner stub
+com.amazon.avod.thirdpartyclient           Prime Video
+com.spotify.music                          Spotify
+com.lemon.lvoverseas                       CapCut
+com.google.android.apps.tachyon            Google Meet (Duo)
+
+## Social media
+com.facebook.katana                        Facebook
+com.facebook.lite                          Facebook Lite
+com.facebook.orca                          Messenger
+com.facebook.system                        Facebook App Installer
+com.facebook.appmanager                    Facebook App Manager
+com.facebook.services                      Facebook Services
+com.instagram.android                      Instagram
+com.instagram.barcelona                    Threads
+com.zhiliaoapp.musically                   TikTok
+com.zhiliaoapp.musically.go                TikTok Lite
+com.ss.android.ugc.trill                   TikTok (Asia)
+com.snapchat.android                       Snapchat
+com.twitter.android                        X (Twitter)
+com.reddit.frontpage                       Reddit
+com.pinterest                              Pinterest
+com.linkedin.android                       LinkedIn
+
+## Games (including the ones Xiaomi preinstalls)
+com.google.android.play.games              Google Play Games
+com.block.juggle                           Block Blast
+com.block.puzzle.game.hippo.mi             Block Puzzle
+com.crazy.juicer.xm                        Crazy Juicer
+com.fugo.wow                               Words of Wonders
+com.funtomic.matchmasters                  Match Masters
+com.jewelsblast.ivygames.adventure.free    Jewels Blast
+com.oakever.tiletrip                       Tile Trip
+com.plarium.raidlegends                    RAID Shadow Legends
+com.soulcompany.bubbleshooter.relaxing     Bubble Shooter
+com.sukhavati.gotoplaying.bubble.bubbleshooter.mint  Bubble Shooter (Mint)
+com.tripledot.solitaire                    Solitaire
+com.vitastudio.mahjong                     Mahjong
+net.wooga.junes_journey_hidden_object_mystery_game  Junes Journey
+
+## Shopping
+com.amazon.mShop.android.shopping          Amazon Shopping
+com.einnovation.temu                       Temu
+com.alibaba.aliexpresshd                   AliExpress
+com.zzkko                                  SHEIN
