@@ -1,0 +1,1237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boring Phone</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='4' width='24' height='24' rx='5' fill='%23f3efe6' stroke='%231f1c17' stroke-width='2.5'/%3E%3Cpath d='M10 10l12 12M22 10L10 22' stroke='%23b93a26' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3efe6;
+    --paper-2: #ebe5d8;
+    --ink: #1f1c17;
+    --ink-2: #5f594e;
+    --ink-3: #9a9385;
+    --rule: #d8d0c0;
+    --red: #b93a26;
+    --red-soft: rgba(185, 58, 38, .09);
+    --ok: #2f6b4f;
+    --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+    --sans: "Schibsted Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #171511;
+      --paper-2: #201d18;
+      --ink: #ece6d9;
+      --ink-2: #a9a192;
+      --ink-3: #6f685c;
+      --rule: #35312a;
+      --red: #e2674f;
+      --red-soft: rgba(226, 103, 79, .12);
+      --ok: #86c3a0;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 16px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* paper grain */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  button { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 20px 160px;
+  }
+
+  /* --- masthead --- */
+  .kicker {
+    margin: 0 0 18px;
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  h1 {
+    margin: 0;
+    font: 400 clamp(52px, 11vw, 92px)/.92 var(--serif);
+    letter-spacing: -.02em;
+  }
+  h1 em { color: var(--red); }
+  .device {
+    margin: 22px 0 0;
+    font: 400 13px/1.4 var(--mono);
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    flex: none;
+  }
+  .dot.on { background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 18%, transparent); }
+  .dot.wait { animation: pulse 1.4s ease-in-out infinite; }
+
+  /* --- connect card --- */
+  .connect {
+    margin-top: 44px;
+    padding: 28px 28px 24px;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    background: var(--paper-2);
+  }
+  .connect h2 { margin: 0 0 8px; font: 400 32px/1.1 var(--serif); }
+  .connect p { margin: 0 0 14px; color: var(--ink-2); }
+  .connect ol { margin: 0; padding-left: 20px; color: var(--ink-2); }
+  .connect li { margin: 6px 0; }
+  .connect .steps { margin: 0 0 14px; padding-left: 22px; }
+  .connect .steps li { margin: 0 0 10px; color: var(--ink-2); }
+  .connect .steps + .steps { margin-top: -4px; }
+  .connect .steps strong:first-child { color: var(--ink); }
+  .connect .fine { margin: 14px 0 0; font-size: 13px; color: var(--ink-3); }
+  .connect .go { margin-top: 4px; }
+  .connect a { color: var(--ink); }
+  .connect code, .notice code { font: 13px var(--mono); background: var(--red-soft); padding: 2px 6px; border-radius: 4px; color: var(--ink); }
+
+  /* --- facts --- */
+  .facts {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    border-top: 1.5px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+  }
+  .fact { padding: 18px 0 20px; }
+  .fact + .fact { padding-left: 28px; border-left: 1px solid var(--rule); }
+  .fact-q {
+    display: block;
+    font: 500 11.5px/1 var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .fact-a {
+    display: block;
+    margin-top: 10px;
+    font: 400 44px/1 var(--serif);
+  }
+  .fact-a.yes { color: var(--red); }
+  .fact-sub { display: block; margin-top: 6px; font-size: 13.5px; color: var(--ink-2); }
+  .chips { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips li {
+    font-size: 13.5px;
+    padding: 3px 10px 3px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink);
+  }
+  .chips li::before { content: "✓"; margin-right: 6px; color: var(--ok); font-weight: 600; }
+  .chips li.missing { color: var(--ink-3); border-style: dashed; }
+  .chips li.missing::before { content: "–"; color: var(--ink-3); }
+  .chips li.locked::after {
+    content: attr(data-locked);
+    margin-left: 7px;
+    font: 500 10px var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .warning { color: var(--red) !important; }
+
+  /* --- tabs --- */
+  .tabs { margin-top: 40px; display: flex; gap: 26px; border-bottom: 1px solid var(--rule); }
+  .tabs button {
+    background: none;
+    border: 0;
+    padding: 0 0 12px;
+    margin-bottom: -1px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--ink-3);
+    border-bottom: 2px solid transparent;
+  }
+  .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+  .tabs .n { font: 12px var(--mono); margin-left: 4px; color: var(--ink-3); }
+
+  .notice {
+    margin: 26px 0 0;
+    padding: 14px 16px;
+    border-left: 3px solid var(--ok);
+    background: var(--paper-2);
+    font-size: 14.5px;
+    border-radius: 0 8px 8px 0;
+  }
+  .notice.bad { border-left-color: var(--red); }
+  .empty { margin: 34px 0 0; color: var(--ink-2); font: 400 22px/1.35 var(--serif); }
+
+  /* --- stages and groups --- */
+  .stage {
+    margin: 52px 0 2px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .stage .numeral { font: italic 400 30px/1 var(--serif); letter-spacing: 0; text-transform: none; color: var(--red); }
+  .stage::after { content: ""; flex: 1; border-bottom: 1px solid var(--rule); transform: translateY(-4px); }
+  .stage-note { margin: 8px 0 0; color: var(--ink-2); font-size: 14.5px; max-width: 54ch; }
+
+  .group { margin-top: 26px; }
+  .group-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .group-head h2 { margin: 0; font: 400 27px/1.15 var(--serif); }
+  .group-note { color: var(--ink-3); font-size: 13.5px; font-style: italic; }
+  .group-toggle {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    padding: 2px 0;
+    cursor: pointer;
+    font: 12px var(--mono);
+    color: var(--ink-3);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .group-toggle:hover { color: var(--ink); }
+
+  .app {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: center;
+    column-gap: 14px;
+    padding: 11px 2px;
+    border-bottom: 1px dotted var(--rule);
+    cursor: pointer;
+    position: relative;
+  }
+  .app:hover { background: linear-gradient(90deg, transparent, var(--red-soft) 30%, transparent); }
+  .app input { position: absolute; opacity: 0; pointer-events: none; }
+  .box {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--ink-2);
+    border-radius: 4px;
+    position: relative;
+    transition: border-color .15s;
+  }
+  .box::before, .box::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 14px; height: 2px;
+    border-radius: 2px;
+    background: var(--red);
+    transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+    transition: transform .18s ease-out;
+  }
+  .box::after { transform: translate(-50%, -50%) rotate(-45deg) scaleX(0); transition-delay: .06s; }
+  input:checked + .box { border-color: var(--red); }
+  input:checked + .box::before { transform: translate(-50%, -50%) rotate(45deg) scaleX(1); }
+  input:checked + .box::after { transform: translate(-50%, -50%) rotate(-45deg) scaleX(1); }
+  input:focus-visible + .box { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .name { min-width: 0; }
+  .label { position: relative; font-weight: 500; transition: color .2s; }
+  .label::after {
+    content: "";
+    position: absolute;
+    left: -3px; right: -3px; top: 55%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--red);
+    transform: scaleX(0) rotate(-1.2deg);
+    transform-origin: left center;
+    transition: transform .3s cubic-bezier(.2, .7, .2, 1);
+  }
+  input:checked ~ .name .label { color: var(--ink-2); }
+  input:checked ~ .name .label::after { transform: scaleX(1) rotate(-1.2deg); }
+  .note { display: block; font-size: 13px; color: var(--ink-3); margin-top: 1px; }
+  .pkg {
+    font: 12px var(--mono);
+    color: var(--ink-3);
+    max-width: 290px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+  }
+  a.pkg { text-decoration: none; }
+  a.pkg:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .result {
+    grid-column: 2 / -1;
+    font: 500 11.5px/1.3 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .result:empty { display: none; }
+  .result.good { color: var(--ok); }
+  .result.bad { color: var(--red); }
+  .result.busy { color: var(--ink-3); animation: pulse 1s ease-in-out infinite; }
+  .app.locked { cursor: default; }
+  .app.locked:hover { background: none; }
+
+  details.more { margin-top: 26px; }
+  details.more summary {
+    cursor: pointer;
+    list-style: none;
+    font: 400 22px/1.3 var(--serif);
+    color: var(--ink-2);
+  }
+  details.more summary::-webkit-details-marker { display: none; }
+  details.more summary::before { content: "+"; display: inline-block; width: 22px; font-family: var(--mono); color: var(--red); }
+  details.more[open] summary::before { content: "–"; }
+
+  .row-action {
+    background: none;
+    border: 1px solid var(--ink-2);
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .row-action:hover { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+  .row-action:disabled { opacity: .35; cursor: default; background: none; color: inherit; }
+  .removed-row { grid-template-columns: 1fr auto; cursor: default; }
+  .removed-row:hover { background: none; }
+  .removed-row .label { color: var(--ink-2); }
+  .removed-row .result { grid-column: 1 / -1; }
+  .removed-row .label::after { transform: scaleX(1) rotate(-1.2deg); opacity: .55; }
+  .removed-row.back .label { color: var(--ink); }
+  .removed-row.back .label::after { transform: scaleX(0); }
+
+  /* --- bottom bar --- */
+  .bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--rule);
+  }
+  .bar-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .bar-text { flex: 1; font-size: 14px; color: var(--ink-2); line-height: 1.35; }
+  .bar-text strong { color: var(--ink); font-weight: 600; }
+  .go {
+    background: var(--ink);
+    color: var(--paper);
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, transform .1s;
+  }
+  .go:hover { background: var(--red); }
+  .go:active { transform: translateY(1px); }
+  .go:disabled { opacity: .35; cursor: default; background: var(--ink); }
+
+  dialog {
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 440px;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .25);
+  }
+  dialog::backdrop { background: rgba(20, 18, 14, .45); backdrop-filter: blur(3px); }
+  dialog h2 { margin: 0 0 10px; font: 400 30px/1.1 var(--serif); }
+  dialog p { margin: 0 0 22px; color: var(--ink-2); font-size: 15px; }
+  .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }
+  .plain { background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 13px 20px; cursor: pointer; font-weight: 500; }
+  .plain:hover { border-color: var(--ink-2); }
+
+  .reveal { animation: up .55s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+  @keyframes up { from { opacity: 0; transform: translateY(10px); } }
+  @keyframes pulse { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  @media (max-width: 600px) {
+    main { padding-top: 36px; }
+    .facts { grid-template-columns: 1fr; }
+    .fact + .fact { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+    .app { grid-template-columns: 22px 1fr; }
+    .pkg { grid-column: 2; text-align: left; max-width: none; }
+    .removed-row { grid-template-columns: 1fr auto; }
+    .removed-row .pkg { grid-column: 1; }
+    .bar-inner { flex-direction: column; align-items: stretch; gap: 10px; }
+    .go { width: 100%; }
+  }
+
+  /* --- language switch and brand chips --- */
+  header { position: relative; }
+  .lang { position: absolute; top: -6px; right: 0; display: flex; gap: 2px; }
+  .lang button {
+    background: none;
+    border: 0;
+    padding: 6px 8px;
+    cursor: pointer;
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .1em;
+    color: var(--ink-3);
+    border-bottom: 1.5px solid transparent;
+  }
+  .lang button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--red); }
+  .lang button:hover { color: var(--ink); }
+  .brands { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0 16px; }
+  .brands span { font-size: 14px; color: var(--ink-2); margin-right: 4px; }
+  .brand-chip {
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--ink-2);
+  }
+  .brand-chip:hover { border-color: var(--ink-2); color: var(--ink); }
+  .brand-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+</style>
+</head>
+<body>
+<main>
+  <header class="reveal">
+    <nav class="lang" aria-label="Language">
+      <button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="es" lang="es">ES</button>
+    </nav>
+    <p class="kicker">Boring Phone · Proyecto Vorágine</p>
+    <h1 data-i18n="title"></h1>
+    <p class="device" id="device"><span class="dot wait"></span><span data-i18n="looking"></span></p>
+  </header>
+
+  <section class="connect reveal" id="connect" style="--i: 2" hidden></section>
+
+  <section class="facts reveal" id="facts" style="--i: 2" hidden>
+    <div class="fact">
+      <span class="fact-q" data-i18n="fact.web"></span>
+      <span class="fact-a" id="fact-web"></span>
+      <span class="fact-sub" id="fact-web-sub"></span>
+    </div>
+    <div class="fact">
+      <span class="fact-q" data-i18n="fact.essentials"></span>
+      <ul class="chips" id="essentials"></ul>
+    </div>
+  </section>
+
+  <nav class="tabs reveal" id="tabs" style="--i: 3" hidden>
+    <button data-tab="phone" aria-selected="true"><span data-i18n="tab.phone"></span><span class="n" id="n-phone"></span></button>
+    <button data-tab="removed" aria-selected="false"><span data-i18n="tab.removed"></span><span class="n" id="n-removed"></span></button>
+  </nav>
+
+  <div id="notice"></div>
+  <section id="tab-phone"></section>
+  <section id="tab-removed" hidden></section>
+</main>
+
+<footer class="bar" id="bar" hidden>
+  <div class="bar-inner">
+    <div class="bar-text" id="bar-text"></div>
+    <button class="go" id="go" disabled></button>
+  </div>
+</footer>
+
+<dialog id="confirm">
+  <form method="dialog">
+    <h2 id="confirm-title"></h2>
+    <p class="warning" id="confirm-kept" hidden></p>
+    <p data-i18n="dialog.body"></p>
+    <div class="dialog-actions">
+      <button class="plain" value="cancel" data-i18n="dialog.cancel"></button>
+      <button class="go" value="ok" id="confirm-ok" data-i18n="dialog.ok"></button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const TOKEN = "__TOKEN__";
+const state = { serial: null, phone: null, busy: false, tab: "phone", status: { state: "none" }, brand: "xiaomi" };
+const $ = (sel) => document.querySelector(sel);
+
+function esc(text) {
+  return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+// Per-viewer preferences (language, phone brand). Storage can be unavailable; the page works without it.
+function load(key) {
+  try { return localStorage.getItem("boring-phone:" + key); } catch { return null; }
+}
+function save(key, value) {
+  try { localStorage.setItem("boring-phone:" + key, value); } catch {}
+}
+
+// --- language -----------------------------------------------------------
+
+const LANGS = ["en", "es"];
+
+// A saved choice wins; otherwise the first of the browser's languages we speak.
+function pickLang() {
+  const saved = load("lang");
+  if (LANGS.includes(saved)) return saved;
+  for (const tag of navigator.languages || [navigator.language || "en"]) {
+    const base = tag.slice(0, 2).toLowerCase();
+    if (LANGS.includes(base)) return base;
+  }
+  return "en";
+}
+let lang = pickLang();
+
+// How each brand hides developer options. Steps 1 and 2 of the setup guide.
+const SETUP = {
+  xiaomi: {
+    en: ["Settings → About phone → tap <strong>OS version</strong> seven times, until it says you're a developer.",
+      "Settings → Additional settings → Developer options → <strong>USB debugging</strong>. Xiaomi makes you wait a few seconds and confirm."],
+    es: ["Ajustes → Sobre el teléfono → toca <strong>Versión del SO</strong> siete veces, hasta que diga que ya eres desarrollador.",
+      "Ajustes → Ajustes adicionales → Opciones de desarrollador → <strong>Depuración USB</strong>. Xiaomi te hace esperar unos segundos y confirmar."],
+  },
+  samsung: {
+    en: ["Settings → About phone → Software information → tap <strong>Build number</strong> seven times, then enter your PIN.",
+      "Settings → <strong>Developer options</strong>, at the very bottom → <strong>USB debugging</strong>."],
+    es: ["Ajustes → Acerca del teléfono → Información de software → toca <strong>Número de compilación</strong> siete veces y escribe tu PIN.",
+      "Ajustes → <strong>Opciones de desarrollador</strong>, al final del todo → <strong>Depuración USB</strong>."],
+  },
+  pixel: {
+    en: ["Settings → About phone → tap <strong>Build number</strong> seven times, then enter your PIN.",
+      "Settings → System → <strong>Developer options</strong> → <strong>USB debugging</strong>."],
+    es: ["Ajustes → Información del teléfono → toca <strong>Número de compilación</strong> siete veces y escribe tu PIN.",
+      "Ajustes → Sistema → <strong>Opciones para desarrolladores</strong> → <strong>Depuración por USB</strong>."],
+  },
+  other: {
+    en: ["Settings → About phone, sometimes inside Software information → tap <strong>Build number</strong> seven times.",
+      "Find <strong>Developer options</strong>, usually under System or at the bottom of Settings → <strong>USB debugging</strong>."],
+    es: ["Ajustes → Información del teléfono, a veces dentro de Información de software → toca <strong>Número de compilación</strong> siete veces.",
+      "Busca <strong>Opciones para desarrolladores</strong>, normalmente en Sistema o al final de Ajustes → <strong>Depuración USB</strong>."],
+  },
+};
+const BRANDS = ["xiaomi", "samsung", "pixel", "other"];
+
+const one = (n, single, many) => (n === 1 ? single : many);
+
+const I18N = {
+  en: {
+    title: "Make it <em>boring.</em>",
+    looking: "Looking for your phone…",
+    "fact.web": "Can it browse the web?",
+    "fact.essentials": "Your essentials",
+    "tab.phone": "On the phone",
+    "tab.removed": "Removed",
+    apps: ({ n }) => n + one(n, " app", " apps"),
+    "bar.text": ({ apps }) => `<strong>${apps}</strong> ticked. Nothing happens until you press the button, and anything can come back later.`,
+    "go.idle": "Remove",
+    "go.n": ({ apps }) => `Remove ${apps}`,
+    "go.progress": ({ i, n }) => `Removing ${i} of ${n}…`,
+    "dialog.title": ({ apps, model }) => `Remove ${apps} from your ${model || "phone"}?`,
+    "dialog.kept": ({ list, n }) => `This includes ${list}, ${one(n, "one of the apps", "apps")} this phone is meant to keep.`,
+    "dialog.body": "They're removed for your user only, with their data kept. Any of them can come back from the <em>Removed</em> tab.",
+    "dialog.cancel": "Not yet",
+    "dialog.ok": "Remove them",
+    yes: "Yes.",
+    no: "No.",
+    "web.through": ({ names }) => `Through ${names}.`,
+    "web.none": "Nothing on it opens a web link. Good.",
+    "chip.missing": "Not on the phone",
+    "chip.locked": "Locked: removing it can break calls or texts",
+    "chip.kept": "Kept unless you tick it under Kept by default",
+    "chip.lockedTag": "locked",
+    "toggle.off": "untick all",
+    "toggle.on": "tick all",
+    empty: "Nothing from the lists is left on this phone. It's already boring.",
+    "more.title": ({ n }) => `${n} more ${one(n, "app", "apps")} with an icon, not on any list`,
+    "more.note": "Mostly useful tools, left alone unless you tick them. Not sure what one is? Click its package name to see it on the Play Store.",
+    "more.link": "See it on the Play Store",
+    refused: "The phone refused to remove this last time.",
+    "removed.intro": "Everything Boring Phone took off this phone. Changed your mind? Bring it back.",
+    "removed.hidden": "hidden, because the phone won't let it be removed",
+    "removed.removed": "removed",
+    "removed.empty": "Nothing removed yet.",
+    "restore.button": "Bring back",
+    "restore.done": "Back",
+    "restore.busy": "bringing it back…",
+    "restore.ok": "back on the phone",
+    "restore.failed": "Couldn't bring it back. If you installed it yourself, reinstall it from the Play Store.",
+    "result.busy": "removing…",
+    "result.removed": "gone",
+    "result.disabled": "hidden, because the phone won't let it be removed",
+    "result.skipped": "already gone",
+    "result.protected": "protected, so it stays",
+    "result.failed": "the phone refused",
+    "done.start": "Done.",
+    "done.removed": ({ n }) => `${n} ${one(n, "app", "apps")} removed`,
+    "done.disabled": ({ n }) => `${n} hidden`,
+    "done.skipped": ({ n }) => `${n} already gone`,
+    "done.nothing": "Nothing changed",
+    "done.refused": ({ list }) => `The phone refused: ${list}.`,
+    "done.log": "Details are in the log in ~/boring-phone-logs.",
+    "done.debugging": "Finished for now? Turn <strong>USB debugging</strong> back off in Developer options.",
+    "stage.distractions": ["I.", "Distractions", "Browsers, feeds, video, social, games, shopping. The reason you're here."],
+    "stage.xiaomi": ["II.", "Xiaomi's own clutter", "Ads, telemetry, app stores and the apps Xiaomi ships nobody asked for."],
+    "stage.samsung": ["II.", "Samsung's own clutter", "Bixby, ad tracking, stores, AR toys and the apps Samsung ships nobody asked for."],
+    "stage.pixel": ["II.", "Google's extras", "Pixels ship clean. These are the few extras worth removing."],
+    "stage.kept": ["III.", "Kept by default", "The apps this phone is for. Tick one only if you mean it; the Play Store is the classic last step. Phone and Messages are locked: losing them can break calls, emergency calls included, and texts."],
+    "brand.label": "My phone:",
+    "brand.xiaomi": "Xiaomi",
+    "brand.samsung": "Samsung",
+    "brand.pixel": "Pixel",
+    "brand.other": "Other",
+    "step.devmode": "Turn on developer mode.",
+    "step.debugging": "Turn on USB debugging.",
+    "step.plug": "<strong>Plug the phone in</strong> with a cable that carries data (some only charge). Pick <strong>File transfer</strong> if the phone asks.",
+    "step.connect": "<strong>Press Connect</strong> and pick your phone in the list your browser shows. Then tap <strong>Allow</strong> on the phone.",
+    "step.vary": "Menu names can vary a little between models.",
+    connect: "Connect your phone",
+    "c.none.hosted.h": "Connect your phone.",
+    "c.none.hosted.p": "Three things on the phone first. It takes two minutes, once.",
+    "c.none.hosted.fine": "Everything happens in this browser tab. Nothing about your phone is uploaded anywhere.",
+    "c.none.local.h": "Plug in your phone.",
+    "c.none.local.p": "Three things on the phone first. This page notices the phone by itself.",
+    "c.none.local.after": "Then tap <strong>Allow</strong> when the phone asks about USB debugging.",
+    "c.auth.h": "Tap “Allow” on your phone.",
+    "c.auth.p": "Unlock it and accept the USB debugging prompt. Tick <strong>Always allow</strong> so it doesn't ask again next time.",
+    "c.auth.hosted": "No prompt? Unplug the cable, plug it back in, and connect again.",
+    "c.auth.local": "No prompt? Unplug the cable and plug it back in.",
+    "c.off.h": "Your phone is plugged in, but USB debugging is off.",
+    "c.off.p": "Right now it's connected for files only, so nothing can change it. Turn debugging on:",
+    "c.off.after": "Then unplug the cable, plug it back in, and connect again.",
+    "c.busy.h": "Something else is using your phone.",
+    "c.busy.p": "Another program has its debugging connection open, usually adb or Android Studio. Close it. If you have adb installed, run <code>adb kill-server</code>. Then:",
+    "c.connecting.h": "Connecting…",
+    "c.connecting.p": "Keep the phone unlocked.",
+    "c.unsupported.h": "This browser can't reach USB devices.",
+    "c.unsupported.p": "Open this page in <strong>Chrome</strong>, <strong>Edge</strong>, <strong>Brave</strong> or <strong>Opera</strong> on a computer. Safari and Firefox can't talk to USB devices.",
+    "c.unsupported.local": ({ href }) => `Only have Safari? Use the <a href="${href}">version you run on your own computer</a>. It does the same thing.`,
+    "c.error.h": "Couldn't connect.",
+    "c.error.p": ({ message }) => `${message} Unplug the cable, plug it back in, and try again.`,
+    "c.error.generic": "Something went wrong.",
+    "c.noadb.h": "This computer needs adb first.",
+    "c.noadb.p": "It's the small tool that talks to Android phones. On a Mac with Homebrew:",
+    "c.noadb.after": ({ href }) => `Or download <a href="${href}">Platform Tools</a> and unzip it into your home folder. Then quit this page's window and start it again.`,
+    "c.multiple.h": "One phone at a time.",
+    "c.multiple.p": ({ list }) => `Several devices are connected (${list}). Unplug the ones you don't want to change.`,
+    "c.server.h": "The Boring Phone window is closed.",
+    "c.server.p": "This page needs it running. Start it again with <code>python3 ui.py</code> in the boring-phone folder.",
+    "c.stale.h": "Boring Phone was restarted.",
+    "c.stale.p": "Reload this page to reconnect.",
+    "c.other.h": "The phone isn't ready.",
+    "c.other.p": ({ state }) => `adb says it's <code>${state}</code>. Unplug it, plug it back in, and give it a few seconds.`,
+    "d.no-adb": "adb is missing",
+    "d.none": "No phone connected",
+    "d.unauthorized": "Waiting for you to tap Allow",
+    "d.multiple": "Too many devices",
+    "d.server": "Not running",
+    "d.stale": "Needs a reload",
+    "d.debugging-off": "Connected for files only",
+    "d.busy": "Phone is busy",
+    "d.connecting": "Connecting",
+    "d.unsupported": "Needs Chrome or Edge",
+    "d.other": "Phone not ready",
+  },
+  es: {
+    title: "Hazlo <em>aburrido.</em>",
+    looking: "Buscando tu teléfono…",
+    "fact.web": "¿Puede navegar por internet?",
+    "fact.essentials": "Lo esencial",
+    "tab.phone": "En el teléfono",
+    "tab.removed": "Quitadas",
+    apps: ({ n }) => n + one(n, " app", " apps"),
+    "bar.text": ({ apps, n }) => `<strong>${apps}</strong> ${one(n, "marcada", "marcadas")}. No pasa nada hasta que pulses el botón, y todo se puede recuperar después.`,
+    "go.idle": "Quitar",
+    "go.n": ({ apps }) => `Quitar ${apps}`,
+    "go.progress": ({ i, n }) => `Quitando ${i} de ${n}…`,
+    "dialog.title": ({ apps, model }) => `¿Quitar ${apps} de tu ${model || "teléfono"}?`,
+    "dialog.kept": ({ list, n }) => `Incluye ${list}, ${one(n, "una de las apps", "apps")} que este teléfono debería conservar.`,
+    "dialog.body": "Se quitan solo para tu usuario y se conservan sus datos. Puedes recuperar cualquiera desde la pestaña <em>Quitadas</em>.",
+    "dialog.cancel": "Todavía no",
+    "dialog.ok": "Quitarlas",
+    yes: "Sí.",
+    no: "No.",
+    "web.through": ({ names }) => `A través de ${names}.`,
+    "web.none": "Nada en él abre un enlace web. Bien.",
+    "chip.missing": "No está en el teléfono",
+    "chip.locked": "Bloqueada: quitarla puede romper las llamadas o los SMS",
+    "chip.kept": "Se queda salvo que la marques en «Se quedan por defecto»",
+    "chip.lockedTag": "bloqueada",
+    "toggle.off": "desmarcar todo",
+    "toggle.on": "marcar todo",
+    empty: "No queda nada de las listas en este teléfono. Ya es aburrido.",
+    "more.title": ({ n }) => `${n} ${one(n, "app más", "apps más")} con icono, fuera de las listas`,
+    "more.note": "Casi todo son herramientas útiles y no se tocan salvo que las marques. ¿No sabes qué es alguna? Pulsa su nombre de paquete para verla en Play Store.",
+    "more.link": "Verla en Play Store",
+    refused: "El teléfono se negó a quitarla la última vez.",
+    "removed.intro": "Todo lo que Boring Phone ha quitado de este teléfono. ¿Has cambiado de idea? Recupéralo.",
+    "removed.hidden": "oculta, porque el teléfono no deja quitarla",
+    "removed.removed": "quitada",
+    "removed.empty": "Todavía no has quitado nada.",
+    "restore.button": "Recuperar",
+    "restore.done": "Recuperada",
+    "restore.busy": "recuperando…",
+    "restore.ok": "de vuelta en el teléfono",
+    "restore.failed": "No se ha podido recuperar. Si la instalaste tú, vuelve a instalarla desde Play Store.",
+    "result.busy": "quitando…",
+    "result.removed": "quitada",
+    "result.disabled": "oculta, porque el teléfono no deja quitarla",
+    "result.skipped": "ya no estaba",
+    "result.protected": "protegida, así que se queda",
+    "result.failed": "el teléfono se ha negado",
+    "done.start": "Hecho.",
+    "done.removed": ({ n }) => `${n} ${one(n, "app quitada", "apps quitadas")}`,
+    "done.disabled": ({ n }) => `${n} ${one(n, "oculta", "ocultas")}`,
+    "done.skipped": ({ n }) => `${n} ${one(n, "ya no estaba", "ya no estaban")}`,
+    "done.nothing": "No ha cambiado nada",
+    "done.refused": ({ list }) => `El teléfono se ha negado a quitar: ${list}.`,
+    "done.log": "Los detalles están en el registro de ~/boring-phone-logs.",
+    "done.debugging": "¿Has terminado? Vuelve a desactivar la <strong>depuración USB</strong> en las opciones de desarrollador.",
+    "stage.distractions": ["I.", "Distracciones", "Navegadores, noticias, vídeo, redes sociales, juegos y compras. El motivo por el que estás aquí."],
+    "stage.xiaomi": ["II.", "El relleno de Xiaomi", "Anuncios, telemetría, tiendas de apps y las apps que Xiaomi instala sin que nadie las pida."],
+    "stage.samsung": ["II.", "El relleno de Samsung", "Bixby, rastreo publicitario, tiendas, juguetes de realidad aumentada y las apps que Samsung instala sin que nadie las pida."],
+    "stage.pixel": ["II.", "Los extras de Google", "Los Pixel vienen limpios. Estos son los pocos extras que merece la pena quitar."],
+    "stage.kept": ["III.", "Se quedan por defecto", "Las apps para las que sirve este teléfono. Marca una solo si de verdad quieres quitarla; Play Store es el último paso clásico. Teléfono y Mensajes están bloqueadas: sin ellas pueden fallar las llamadas, también las de emergencia, y los SMS."],
+    "brand.label": "Mi teléfono:",
+    "brand.xiaomi": "Xiaomi",
+    "brand.samsung": "Samsung",
+    "brand.pixel": "Pixel",
+    "brand.other": "Otro",
+    "step.devmode": "Activa el modo desarrollador.",
+    "step.debugging": "Activa la depuración USB.",
+    "step.plug": "<strong>Conecta el teléfono</strong> con un cable que transmita datos (algunos solo cargan). Elige <strong>Transferencia de archivos</strong> si el teléfono pregunta.",
+    "step.connect": "<strong>Pulsa Conectar</strong> y elige tu teléfono en la lista que muestra el navegador. Después toca <strong>Permitir</strong> en el teléfono.",
+    "step.vary": "Los nombres de los menús pueden variar un poco según el modelo.",
+    connect: "Conectar el teléfono",
+    "c.none.hosted.h": "Conecta tu teléfono.",
+    "c.none.hosted.p": "Primero, tres cosas en el teléfono. Son dos minutos y solo la primera vez.",
+    "c.none.hosted.fine": "Todo ocurre en esta pestaña del navegador. No se sube nada de tu teléfono a ningún sitio.",
+    "c.none.local.h": "Conecta tu teléfono por USB.",
+    "c.none.local.p": "Primero, tres cosas en el teléfono. Esta página lo detecta sola.",
+    "c.none.local.after": "Después toca <strong>Permitir</strong> cuando el teléfono pregunte por la depuración USB.",
+    "c.auth.h": "Toca «Permitir» en el teléfono.",
+    "c.auth.p": "Desbloquéalo y acepta el aviso de depuración USB. Marca <strong>Permitir siempre</strong> para que no vuelva a preguntar.",
+    "c.auth.hosted": "¿No aparece el aviso? Desconecta el cable, vuelve a conectarlo y pulsa Conectar otra vez.",
+    "c.auth.local": "¿No aparece el aviso? Desconecta el cable y vuelve a conectarlo.",
+    "c.off.h": "Tu teléfono está conectado, pero la depuración USB está desactivada.",
+    "c.off.p": "Ahora mismo solo está conectado para archivos, así que no se puede cambiar nada. Activa la depuración:",
+    "c.off.after": "Después desconecta el cable, vuelve a conectarlo y pulsa Conectar otra vez.",
+    "c.busy.h": "Otro programa está usando tu teléfono.",
+    "c.busy.p": "Otro programa tiene abierta su conexión de depuración, normalmente adb o Android Studio. Ciérralo. Si tienes adb instalado, ejecuta <code>adb kill-server</code>. Después:",
+    "c.connecting.h": "Conectando…",
+    "c.connecting.p": "Mantén el teléfono desbloqueado.",
+    "c.unsupported.h": "Este navegador no puede usar dispositivos USB.",
+    "c.unsupported.p": "Abre esta página en <strong>Chrome</strong>, <strong>Edge</strong>, <strong>Brave</strong> u <strong>Opera</strong> en un ordenador. Safari y Firefox no pueden comunicarse con dispositivos USB.",
+    "c.unsupported.local": ({ href }) => `¿Solo tienes Safari? Usa la <a href="${href}">versión que se ejecuta en tu propio ordenador</a>. Hace lo mismo.`,
+    "c.error.h": "No se ha podido conectar.",
+    "c.error.p": ({ message }) => `${message} Desconecta el cable, vuelve a conectarlo e inténtalo otra vez.`,
+    "c.error.generic": "Algo ha fallado.",
+    "c.noadb.h": "Este ordenador necesita adb primero.",
+    "c.noadb.p": "Es la pequeña herramienta que se comunica con los teléfonos Android. En un Mac con Homebrew:",
+    "c.noadb.after": ({ href }) => `O descarga <a href="${href}">Platform Tools</a> y descomprímelo en tu carpeta personal. Después cierra la ventana de esta página y vuelve a abrirla.`,
+    "c.multiple.h": "Un teléfono cada vez.",
+    "c.multiple.p": ({ list }) => `Hay varios dispositivos conectados (${list}). Desconecta los que no quieras cambiar.`,
+    "c.server.h": "La ventana de Boring Phone está cerrada.",
+    "c.server.p": "Esta página la necesita abierta. Vuelve a iniciarla con <code>python3 ui.py</code> en la carpeta boring-phone.",
+    "c.stale.h": "Boring Phone se ha reiniciado.",
+    "c.stale.p": "Recarga esta página para volver a conectar.",
+    "c.other.h": "El teléfono no está listo.",
+    "c.other.p": ({ state }) => `adb dice que está <code>${state}</code>. Desconéctalo, vuelve a conectarlo y espera unos segundos.`,
+    "d.no-adb": "Falta adb",
+    "d.none": "No hay ningún teléfono conectado",
+    "d.unauthorized": "Esperando a que toques Permitir",
+    "d.multiple": "Demasiados dispositivos",
+    "d.server": "No se está ejecutando",
+    "d.stale": "Hay que recargar",
+    "d.debugging-off": "Conectado solo para archivos",
+    "d.busy": "El teléfono está ocupado",
+    "d.connecting": "Conectando",
+    "d.unsupported": "Necesita Chrome o Edge",
+    "d.other": "El teléfono no está listo",
+  },
+};
+
+// Text that comes from lists/ and ui/apps.json: headings, notes and the few app names
+// that are words rather than names. Everything else (app names) stays as is.
+const ES_TEXT = {
+  Browsers: "Navegadores",
+  "Search, feeds and AI chat": "Buscadores, noticias y chats de IA",
+  "each one is a browser by another name": "cada uno es un navegador con otro nombre",
+  "Video and music streaming": "Vídeo y música en streaming",
+  "Social media": "Redes sociales",
+  Games: "Juegos",
+  "including the ones phone makers preinstall": "incluidos los que traen los fabricantes",
+  Shopping: "Compras",
+  "Ads and telemetry": "Anuncios y telemetría",
+  "Feeds, stores and recommendations": "Noticias, tiendas y recomendaciones",
+  Media: "Multimedia",
+  "Money and loans": "Pagos y préstamos",
+  Misc: "Varios",
+  "Partner apps preloaded by Xiaomi": "Apps de socios que preinstala Xiaomi",
+  "Partner apps preloaded by Samsung": "Apps de socios que preinstala Samsung",
+  "Riskier — off by default": "Más arriesgadas, desmarcadas por defecto",
+  "Ads, tracking and diagnostics": "Anuncios, rastreo y diagnóstico",
+  "Stores, tips and community": "Tiendas, consejos y comunidad",
+  "AR and camera extras": "Realidad aumentada y extras de cámara",
+  "Google extras": "Extras de Google",
+  "Your essentials": "Lo esencial",
+  Phone: "Teléfono",
+  Messages: "Mensajes",
+  Camera: "Cámara",
+  "news feed": "noticias",
+  "old package": "paquete antiguo",
+  "alt package": "paquete alternativo",
+  "China package": "paquete de China",
+  telemetry: "telemetría",
+  "Xiaomi app store": "tienda de apps de Xiaomi",
+  "shows ads": "muestra anuncios",
+  "performance and thermal profiles; rated Expert, can affect refresh rate":
+    "perfiles de rendimiento y temperatura; nivel Experto, puede afectar a la tasa de refresco",
+  "rated Advanced, may break setting wallpapers": "nivel Avanzado, puede impedir cambiar el fondo de pantalla",
+  "builds an ad profile from your usage": "crea un perfil publicitario con tu uso",
+  "ads for Samsung apps": "anuncios de apps de Samsung",
+  "rated Expert; Samsung Pay and some Samsung app updates need it":
+    "nivel Experto; Samsung Pay y algunas actualizaciones de apps de Samsung lo necesitan",
+  "only used during setup": "solo se usa al configurar el teléfono",
+};
+
+function t(key, vars = {}) {
+  const value = I18N[lang][key] ?? I18N.en[key] ?? key;
+  return typeof value === "function" ? value(vars) : value;
+}
+// For text from the lists and apps.json. Kept-app notes come as {en, es}.
+function tr(text) {
+  if (text && typeof text === "object") return text[lang] ?? text.en ?? "";
+  return (lang === "es" && ES_TEXT[text]) || text;
+}
+const apps = (n) => t("apps", { n });
+const listOf = (items) => new Intl.ListFormat(lang).format(items);
+
+function applyStatic() {
+  document.documentElement.lang = lang;
+  for (const el of document.querySelectorAll("[data-i18n]")) el.innerHTML = t(el.dataset.i18n);
+  for (const btn of document.querySelectorAll(".lang button")) btn.setAttribute("aria-pressed", btn.dataset.lang === lang);
+}
+
+function setLang(next) {
+  lang = next;
+  save("lang", next);
+  applyStatic();
+  if (state.phone && state.status.state === "device") {
+    // Re-render in the new language without losing what's ticked.
+    const ticks = new Map([...document.querySelectorAll("#tab-phone input[data-pkg]")].map((b) => [b.dataset.pkg, b.checked]));
+    showDevice(state.status);
+    renderFacts();
+    renderPhone(ticks);
+    renderRemoved();
+  } else {
+    showConnect(state.status);
+  }
+}
+
+// --- talking to the phone ---------------------------------------------------
+
+// The hosted site (web/) replaces the local ui.py server with a backend that talks to the phone over WebUSB.
+const backend = () => window.boringBackend;
+
+async function api(path, body) {
+  if (backend()) return backend().request(path, body);
+  const res = await fetch(path, {
+    method: body ? "POST" : "GET",
+    headers: { "X-Boring-Token": TOKEN, "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+// --- connection ---------------------------------------------------------
+
+function setupSteps() {
+  const [devmode, debugging] = SETUP[state.brand][lang] || SETUP[state.brand].en;
+  const chips = BRANDS.map((b) => `<button type="button" class="brand-chip" data-brand="${b}" aria-pressed="${b === state.brand}">${t("brand." + b)}</button>`).join("");
+  return `<div class="brands"><span>${t("brand.label")}</span>${chips}</div>
+    <ol class="steps">
+      <li><strong>${t("step.devmode")}</strong> ${devmode}</li>
+      <li><strong>${t("step.debugging")}</strong> ${debugging}</li>
+      <li>${t("step.plug")}</li>
+    </ol>`;
+}
+const connectButton = () => `<p><button class="go" type="button" data-connect>${t("connect")}</button></p>`;
+const LOCAL_URL = "https://github.com/siragnabih/boring-phone#4-the-easy-way-pick-apps-in-your-browser";
+
+const CONNECT = {
+  "no-adb": () => `<h2>${t("c.noadb.h")}</h2><p>${t("c.noadb.p")}</p>
+    <p><code>brew install android-platform-tools</code></p>
+    <p>${t("c.noadb.after", { href: "https://developer.android.com/tools/releases/platform-tools" })}</p>`,
+  none: () => backend()
+    ? `<h2>${t("c.none.hosted.h")}</h2><p>${t("c.none.hosted.p")}</p>
+      ${setupSteps()}
+      <ol class="steps" start="4"><li>${t("step.connect")}</li></ol>
+      ${connectButton()}
+      <p class="fine">${t("c.none.hosted.fine")} ${t("step.vary")}</p>`
+    : `<h2>${t("c.none.local.h")}</h2><p>${t("c.none.local.p")}</p>
+      ${setupSteps()}
+      <p>${t("c.none.local.after")}</p>
+      <p class="fine">${t("step.vary")}</p>`,
+  unauthorized: () => `<h2>${t("c.auth.h")}</h2><p>${t("c.auth.p")}</p>
+    ${backend() ? `<p>${t("c.auth.hosted")}</p>${connectButton()}` : `<p>${t("c.auth.local")}</p>`}`,
+  // The states below only come from the hosted backend.
+  "debugging-off": () => `<h2>${t("c.off.h")}</h2><p>${t("c.off.p")}</p>
+    ${setupSteps()}
+    <p>${t("c.off.after")}</p>
+    ${connectButton()}`,
+  busy: () => `<h2>${t("c.busy.h")}</h2><p>${t("c.busy.p")}</p>${connectButton()}`,
+  connecting: () => `<h2>${t("c.connecting.h")}</h2><p>${t("c.connecting.p")}</p>`,
+  unsupported: () => `<h2>${t("c.unsupported.h")}</h2><p>${t("c.unsupported.p")}</p>
+    <p>${t("c.unsupported.local", { href: LOCAL_URL })}</p>`,
+  error: (s) => `<h2>${t("c.error.h")}</h2><p>${t("c.error.p", { message: esc(s.message || t("c.error.generic")) })}</p>
+    ${connectButton()}`,
+  multiple: (s) => `<h2>${t("c.multiple.h")}</h2><p>${t("c.multiple.p", { list: s.devices.map((d) => esc(d.serial)).join(", ") })}</p>`,
+  server: () => `<h2>${t("c.server.h")}</h2><p>${t("c.server.p")}</p>`,
+  stale: () => `<h2>${t("c.stale.h")}</h2><p>${t("c.stale.p")}</p>`,
+  other: (s) => `<h2>${t("c.other.h")}</h2><p>${t("c.other.p", { state: esc(s.state) })}</p>`,
+};
+
+function showConnect(status) {
+  const kind = CONNECT[status.state] ? status.state : "other";
+  $("#connect").innerHTML = CONNECT[kind](status);
+  $("#connect").hidden = false;
+  for (const id of ["#facts", "#tabs", "#tab-phone", "#tab-removed", "#bar"]) $(id).hidden = true;
+  $("#notice").innerHTML = "";
+  $("#device").innerHTML = `<span class="dot wait"></span><span>${t("d." + kind)}</span>`;
+}
+
+function showDevice(s) {
+  // Samsung reports itself as "samsung".
+  const maker = s.manufacturer ? s.manufacturer[0].toUpperCase() + s.manufacturer.slice(1) : "";
+  const bits = [[maker, s.model].filter(Boolean).join(" "), s.android && "Android " + s.android, s.os].filter(Boolean);
+  $("#device").innerHTML = `<span class="dot on"></span><span>${bits.map(esc).join(" · ")}</span>`;
+}
+
+// Remember the connected phone's brand, so the setup steps match it next time.
+function brandOf(manufacturer = "") {
+  const m = manufacturer.toLowerCase();
+  if (["xiaomi", "redmi", "poco"].includes(m)) return "xiaomi";
+  if (m === "samsung") return "samsung";
+  if (m === "google") return "pixel";
+  return "other";
+}
+
+let pollTimer = null;
+let polling = false;
+let pollAgain = false;
+
+async function poll() {
+  if (polling) {
+    pollAgain = true;
+    return;
+  }
+  polling = true;
+  clearTimeout(pollTimer);
+  let status;
+  try {
+    status = await api("/api/status");
+  } catch (e) {
+    // A restarted server has a new token, so this tab's requests are refused.
+    status = { state: e.message === "forbidden" ? "stale" : "server" };
+  }
+  const changed = state.status.state !== status.state;
+  state.status = status;
+  if (status.state === "device") {
+    state.model = status.model;
+    state.brand = brandOf(status.manufacturer);
+    save("brand", state.brand);
+    showDevice(status);
+    if (status.serial !== state.serial && !state.busy) {
+      state.serial = status.serial;
+      await loadPhone();
+    }
+  } else if (!state.busy) {
+    state.serial = null;
+    if (changed || !$("#connect").innerHTML) showConnect(status);
+  }
+  polling = false;
+  if (pollAgain) {
+    pollAgain = false;
+    return poll();
+  }
+  pollTimer = setTimeout(poll, status.state === "device" ? 5000 : 2000);
+}
+
+// --- rendering ----------------------------------------------------------
+
+async function loadPhone() {
+  try {
+    state.phone = await api("/api/phone");
+  } catch (e) {
+    $("#notice").innerHTML = `<p class="notice bad">${esc(e.message)}</p>`;
+    return;
+  }
+  $("#connect").hidden = true;
+  $("#facts").hidden = false;
+  $("#tabs").hidden = false;
+  renderFacts();
+  renderPhone();
+  renderRemoved();
+  selectTab(state.tab);
+}
+
+function renderFacts() {
+  const { browsers, essentials } = state.phone;
+  $("#fact-web").textContent = browsers.length ? t("yes") : t("no");
+  $("#fact-web").className = "fact-a " + (browsers.length ? "yes" : "no");
+  $("#fact-web-sub").textContent = browsers.length ? t("web.through", { names: listOf(browsers.map(nameFor)) }) : t("web.none");
+  $("#essentials").innerHTML = essentials
+    .map((e) => {
+      const title = !e.installed ? t("chip.missing") : e.locked ? t("chip.locked") : t("chip.kept");
+      const cls = [e.installed ? "" : "missing", e.locked ? "locked" : ""].join(" ");
+      return `<li class="${cls}" title="${esc(title)}" data-locked="${esc(t("chip.lockedTag"))}">${esc(tr(e.name))}</li>`;
+    })
+    .join("");
+}
+
+function nameFor(pkg) {
+  const { groups, other, removed } = state.phone;
+  for (const g of groups) for (const a of g.apps) if (a.package === pkg) return tr(a.label);
+  for (const a of other.concat(removed)) if (a.package === pkg) return tr(a.label);
+  return pkg;
+}
+
+function appRow(app, ticked, i, lookup, kept) {
+  // adb can't read app names, so unlisted apps link to their Play Store page.
+  const pkg = lookup
+    ? `<a class="pkg" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(app.package)}" target="_blank" rel="noopener" title="${esc(t("more.link"))}">${esc(app.package)} ↗</a>`
+    : `<code class="pkg" title="${esc(app.package)}">${esc(app.package)}</code>`;
+  const note = app.refused ? t("refused") : tr(app.note);
+  return `<label class="app reveal" style="--i:${i}">
+      <input type="checkbox" data-pkg="${esc(app.package)}" data-label="${esc(app.label)}" ${kept ? "data-kept" : ""} ${ticked ? "checked" : ""}>
+      <span class="box"></span>
+      <span class="name"><span class="label">${esc(tr(app.label))}</span>${note ? `<span class="note">${esc(note)}</span>` : ""}</span>
+      ${pkg}
+      <span class="result"></span>
+    </label>`;
+}
+
+// ticks: optional Map of package → checked, to keep the user's choices across a re-render.
+function renderPhone(ticks) {
+  const { groups, other } = state.phone;
+  const isTicked = (a, fallback) => (ticks?.has(a.package) ? ticks.get(a.package) : fallback);
+  let html = "";
+  let i = 4;
+  const stages = [...new Set(["distractions", ...groups.map((g) => g.stage).filter((s) => s !== "kept"), "kept"])];
+  for (const stage of stages) {
+    const stageGroups = groups.filter((g) => g.stage === stage);
+    if (!stageGroups.length) continue;
+    const [numeral, title, note] = t("stage." + stage);
+    html += `<h3 class="stage reveal" style="--i:${i++}"><span class="numeral">${numeral}</span>${title}</h3>
+      <p class="stage-note">${note}</p>`;
+    for (const g of stageGroups) {
+      const kept = stage === "kept";
+      html += `<div class="group"><div class="group-head reveal" style="--i:${i++}"><h2>${esc(tr(g.title))}</h2>
+        ${g.note ? `<span class="group-note">${esc(tr(g.note))}</span>` : ""}
+        ${kept ? "" : `<button class="group-toggle" type="button"></button>`}</div>
+        ${g.apps.map((a) => appRow(a, isTicked(a, a.ticked), Math.min(i++, 30), false, kept)).join("")}</div>`;
+    }
+  }
+  if (!groups.length) html += `<p class="empty">${t("empty")}</p>`;
+  if (other.length) {
+    const open = $("details.more")?.open ? "open" : "";
+    html += `<details class="more" ${open}><summary>${t("more.title", { n: other.length })}</summary>
+      <p class="stage-note">${t("more.note")}</p>
+      <div class="group">${other.map((a) => appRow(a, isTicked(a, false), 0, true)).join("")}</div></details>`;
+  }
+  $("#tab-phone").innerHTML = html;
+  for (const btn of document.querySelectorAll(".group-toggle")) {
+    btn.addEventListener("click", () => {
+      const boxes = btn.closest(".group").querySelectorAll("input:not(:disabled)");
+      const anyTicked = [...boxes].some((b) => b.checked);
+      boxes.forEach((b) => (b.checked = !anyTicked));
+      updateCount();
+    });
+  }
+  $("#n-phone").textContent = groups.reduce((n, g) => n + g.apps.length, 0) + other.length;
+  updateCount();
+}
+
+function renderRemoved() {
+  const { removed } = state.phone;
+  $("#n-removed").textContent = removed.length || "";
+  $("#tab-removed").innerHTML = removed.length
+    ? `<p class="stage-note" style="margin-top:26px">${t("removed.intro")}</p>
+       ${removed.map((a, i) => `<div class="app removed-row reveal" style="--i:${Math.min(i, 20)}">
+          <span class="name"><span class="label">${esc(tr(a.label))}</span><span class="note">${a.state === "disabled" ? t("removed.hidden") : t("removed.removed")} · <code class="pkg" style="text-align:left">${esc(a.package)}</code></span></span>
+          <button class="row-action" type="button" data-pkg="${esc(a.package)}">${t("restore.button")}</button>
+          <span class="result"></span></div>`).join("")}`
+    : `<p class="empty">${t("removed.empty")}</p>`;
+  for (const btn of document.querySelectorAll("#tab-removed .row-action")) btn.addEventListener("click", () => restore(btn));
+}
+
+function ticked() {
+  return [...document.querySelectorAll("#tab-phone input:checked:not(:disabled)")];
+}
+
+function updateCount() {
+  const n = ticked().length;
+  $("#bar-text").innerHTML = t("bar.text", { apps: apps(n), n });
+  $("#go").disabled = n === 0 || state.busy;
+  if (!state.busy) $("#go").textContent = n ? t("go.n", { apps: apps(n) }) : t("go.idle");
+  for (const btn of document.querySelectorAll(".group-toggle")) {
+    const boxes = [...btn.closest(".group").querySelectorAll("input:not(:disabled)")];
+    btn.textContent = boxes.some((b) => b.checked) ? t("toggle.off") : t("toggle.on");
+  }
+}
+
+function selectTab(tab) {
+  state.tab = tab;
+  for (const btn of document.querySelectorAll(".tabs button")) btn.setAttribute("aria-selected", btn.dataset.tab === tab);
+  $("#tab-phone").hidden = tab !== "phone";
+  $("#tab-removed").hidden = tab !== "removed";
+  $("#bar").hidden = tab !== "phone";
+}
+
+// --- actions ------------------------------------------------------------
+
+async function removeTicked() {
+  const boxes = ticked();
+  state.busy = true;
+  $("#notice").innerHTML = "";
+  const tally = { removed: 0, disabled: 0, failed: 0, skipped: 0, protected: 0 };
+  const refused = [];
+  let done = 0;
+  for (const box of boxes) box.disabled = true;
+  updateCount();
+  for (const box of boxes) {
+    const row = box.closest(".app");
+    const result = row.querySelector(".result");
+    row.classList.add("locked");
+    result.className = "result busy";
+    result.textContent = t("result.busy");
+    $("#go").textContent = t("go.progress", { i: ++done, n: boxes.length });
+    let res;
+    try {
+      res = await api("/api/remove", { package: box.dataset.pkg, label: box.dataset.label, serial: state.serial });
+    } catch (e) {
+      res = { status: "failed", detail: e.message };
+    }
+    tally[res.status] = (tally[res.status] || 0) + 1;
+    result.className = "result " + (res.status === "failed" || res.status === "protected" ? "bad" : "good");
+    result.textContent = t("result." + res.status);
+    if (res.status === "failed") refused.push(tr(box.dataset.label));
+  }
+  const parts = [];
+  if (tally.removed) parts.push(t("done.removed", { n: tally.removed }));
+  if (tally.disabled) parts.push(t("done.disabled", { n: tally.disabled }));
+  if (tally.skipped) parts.push(t("done.skipped", { n: tally.skipped }));
+  let text = t("done.start") + " " + (parts.length ? listOf(parts) : t("done.nothing")) + ".";
+  if (refused.length) {
+    text += " " + t("done.refused", { list: esc(listOf(refused)) }) + (backend() ? "" : " " + t("done.log"));
+  }
+  text += "<br>" + t("done.debugging");
+  setTimeout(async () => {
+    state.busy = false;
+    await loadPhone();
+    $("#notice").innerHTML = `<p class="notice ${refused.length ? "bad" : ""}">${text}</p>`;
+  }, 1600);
+}
+
+async function restore(btn) {
+  const row = btn.closest(".app");
+  const result = row.querySelector(".result");
+  btn.disabled = true;
+  result.className = "result busy";
+  result.textContent = t("restore.busy");
+  let res;
+  try {
+    res = await api("/api/restore", { package: btn.dataset.pkg, serial: state.serial });
+  } catch (e) {
+    res = { status: "failed" };
+  }
+  if (res.status === "restored") {
+    row.classList.add("back");
+    result.className = "result good";
+    result.textContent = t("restore.ok");
+    btn.textContent = t("restore.done");
+    const fresh = await api("/api/phone").catch(() => null);
+    if (fresh) {
+      state.phone = fresh;
+      renderFacts();
+      renderPhone();
+      $("#n-removed").textContent = fresh.removed.length || "";
+    }
+  } else {
+    btn.disabled = false;
+    result.className = "result bad";
+    result.textContent = t("restore.failed");
+  }
+}
+
+for (const btn of document.querySelectorAll(".tabs button")) btn.addEventListener("click", () => selectTab(btn.dataset.tab));
+for (const btn of document.querySelectorAll(".lang button")) btn.addEventListener("click", () => setLang(btn.dataset.lang));
+$("#tab-phone").addEventListener("change", updateCount);
+$("#go").addEventListener("click", () => {
+  const n = ticked().length;
+  $("#confirm-title").textContent = t("dialog.title", { apps: apps(n), model: state.model });
+  const kept = ticked().filter((b) => "kept" in b.dataset).map((b) => tr(b.dataset.label));
+  $("#confirm-kept").hidden = !kept.length;
+  $("#confirm-kept").textContent = kept.length ? t("dialog.kept", { list: listOf(kept), n: kept.length }) : "";
+  $("#confirm").showModal();
+});
+$("#confirm").addEventListener("close", () => {
+  if ($("#confirm").returnValue === "ok") removeTicked();
+});
+$("#connect").addEventListener("click", (e) => {
+  // The browser only shows its USB device picker in direct response to a click.
+  if (e.target.closest("[data-connect]")) backend().connect();
+  const chip = e.target.closest("[data-brand]");
+  if (chip) {
+    state.brand = chip.dataset.brand;
+    save("brand", state.brand);
+    showConnect(state.status);
+  }
+});
+
+state.brand = BRANDS.includes(load("brand")) ? load("brand") : "xiaomi";
+applyStatic();
+
+// The hosted backend is a module script, which runs after this one but before DOMContentLoaded.
+document.addEventListener("DOMContentLoaded", () => {
+  if (backend()) backend().onChange = poll;
+  poll();
+});
+</script>
+</body>
+</html>

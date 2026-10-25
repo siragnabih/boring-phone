@@ -1,6 +1,6 @@
-# Boring Phone — Stage 1: distraction sources
+# Boring Phone — Stage 1: distraction sources, on any Android phone
 #
-# Both debloat.sh and debloat.bat read this file.
+# Read by debloat.sh, debloat.bat, ui.py and the website.
 # Format: <package>  <label>
 # To KEEP an app, put a # in front of its line.
 # Packages that aren't on your phone are skipped, so a long list is harmless.
@@ -20,6 +20,8 @@ org.mozilla.firefox                        Firefox
 com.brave.browser                          Brave
 com.duckduckgo.mobile.android              DuckDuckGo
 com.kiwibrowser.browser                    Kiwi Browser
+com.sec.android.app.sbrowser               Samsung Internet
+com.sec.android.app.sbrowser.lite          Samsung Internet Lite
 
 ## Search, feeds and AI chat (each one is a browser by another name)
 com.google.android.googlequicksearchbox    Google app (Search, Discover, Assistant, Circle to Search)
@@ -28,16 +30,21 @@ com.google.ar.lens                         Google Lens
 com.google.android.apps.magazines          Google News
 com.flipboard.app                          Flipboard
 com.flipboard.boxer.app                    Flipboard Briefing
+com.opera.app.news                         Opera News
+com.samsung.android.app.spage              Samsung Free (news feed)
 
 ## Video and music streaming
 com.google.android.youtube                 YouTube
 com.google.android.apps.youtube.music      YouTube Music
 com.google.android.apps.youtube.kids       YouTube Kids
 com.google.android.videos                  Google TV
+com.samsung.android.tvplus                 Samsung TV Plus
+com.google.android.apps.podcasts           Google Podcasts
 com.netflix.mediaclient                    Netflix
 com.netflix.partner.activation             Netflix partner stub
 com.amazon.avod.thirdpartyclient           Prime Video
 com.spotify.music                          Spotify
+com.amazon.mp3                             Amazon Music
 com.lemon.lvoverseas                       CapCut
 com.google.android.apps.tachyon            Google Meet (Duo)
 
@@ -58,22 +65,34 @@ com.twitter.android                        X (Twitter)
 com.reddit.frontpage                       Reddit
 com.pinterest                              Pinterest
 com.linkedin.android                       LinkedIn
+com.xingin.xhs                             RedNote (Xiaohongshu)
 
-## Games (including the ones Xiaomi preinstalls)
+## Games (including the ones phone makers preinstall)
 com.google.android.play.games              Google Play Games
 com.block.juggle                           Block Blast
 com.block.puzzle.game.hippo.mi             Block Puzzle
 com.crazy.juicer.xm                        Crazy Juicer
 com.fugo.wow                               Words of Wonders
 com.funtomic.matchmasters                  Match Masters
-com.jewelsblast.ivygames.adventure.free    Jewels Blast
+com.jewelsblast.ivygames.Adventure.free    Jewels Blast
 com.oakever.tiletrip                       Tile Trip
 com.plarium.raidlegends                    RAID Shadow Legends
 com.soulcompany.bubbleshooter.relaxing     Bubble Shooter
-com.sukhavati.gotoplaying.bubble.bubbleshooter.mint  Bubble Shooter (Mint)
+com.sukhavati.gotoplaying.bubble.BubbleShooter.mint  Bubble Shooter (Mint)
 com.tripledot.solitaire                    Solitaire
 com.vitastudio.mahjong                     Mahjong
 net.wooga.junes_journey_hidden_object_mystery_game  Junes Journey
+com.king.candycrushsaga                    Candy Crush Saga
+com.logame.eliminateintruder3d             Dust Settle 3D
+com.mintgames.triplecrush.tile.fun         Tile Fun
+com.mintgames.wordtrip                     Word Trip
+com.nebula.mahjongtile                     Mahjong Tile
+com.oakever.arrows                         Arrows puzzle
+com.oakever.meowdoku                       Meowdoku
+com.ordinaryjoy.woodblast                  Wood Blast
+com.wood.block.sudoku.puzzle.bm            Wood Block Sudoku
+funvent.tilepark                           Tile Park
+in.playsimple.wordsearch                   Word Search
 
 ## Shopping
 com.amazon.mShop.android.shopping          Amazon Shopping

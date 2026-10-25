@@ -1,0 +1,233 @@
+{
+  "_comment": "Shared by ui.py (local page) and web/ (hosted page). debloat.sh and debloat.bat keep their own short copy of the essentials, locks and brands.",
+  "brands": [
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi",
+      "manufacturers": [
+        "xiaomi",
+        "redmi",
+        "poco"
+      ],
+      "list": "xiaomi.txt"
+    },
+    {
+      "id": "samsung",
+      "name": "Samsung",
+      "manufacturers": [
+        "samsung"
+      ],
+      "list": "samsung.txt"
+    },
+    {
+      "id": "pixel",
+      "name": "Google Pixel",
+      "manufacturers": [
+        "google"
+      ],
+      "list": "pixel.txt"
+    }
+  ],
+  "essentials": [
+    {
+      "name": "WhatsApp",
+      "packages": [
+        "com.whatsapp",
+        "com.whatsapp.w4b"
+      ]
+    },
+    {
+      "name": "Gmail",
+      "packages": [
+        "com.google.android.gm"
+      ]
+    },
+    {
+      "name": "Google Maps",
+      "packages": [
+        "com.google.android.apps.maps"
+      ]
+    },
+    {
+      "name": "Phone",
+      "packages": [
+        "com.google.android.dialer",
+        "com.android.contacts",
+        "com.android.dialer",
+        "com.samsung.android.dialer"
+      ]
+    },
+    {
+      "name": "Messages",
+      "packages": [
+        "com.google.android.apps.messaging",
+        "com.android.mms",
+        "com.samsung.android.messaging"
+      ]
+    },
+    {
+      "name": "Camera",
+      "packages": [
+        "com.android.camera",
+        "com.google.android.GoogleCamera",
+        "com.sec.android.app.camera"
+      ]
+    },
+    {
+      "name": "Play Store",
+      "packages": [
+        "com.android.vending"
+      ]
+    }
+  ],
+  "locked_essentials": [
+    "Phone",
+    "Messages"
+  ],
+  "core_protected": [
+    "com.android.incallui",
+    "com.android.phone",
+    "com.android.settings",
+    "com.android.systemui",
+    "com.google.android.apps.nexuslauncher",
+    "com.google.android.gms",
+    "com.google.android.inputmethod.latin",
+    "com.google.android.webview",
+    "com.mi.android.globallauncher",
+    "com.miui.home",
+    "com.miui.securitycenter",
+    "com.samsung.android.honeyboard",
+    "com.samsung.android.incallui",
+    "com.samsung.android.kgclient",
+    "com.sec.android.app.launcher"
+  ],
+  "kept": {
+    "com.whatsapp": {
+      "label": "WhatsApp",
+      "note": {
+        "en": "Back up your chats first. If you installed it yourself, it comes back from the Play Store, not from here.",
+        "es": "Haz una copia de tus chats antes. Si la instalaste tú, vuelve desde Play Store, no desde aquí."
+      }
+    },
+    "com.whatsapp.w4b": {
+      "label": "WhatsApp Business",
+      "note": {
+        "en": "Back up your chats first. If you installed it yourself, it comes back from the Play Store, not from here.",
+        "es": "Haz una copia de tus chats antes. Si la instalaste tú, vuelve desde Play Store, no desde aquí."
+      }
+    },
+    "com.google.android.gm": {
+      "label": "Gmail",
+      "note": {
+        "en": "Your email stays safe in your Google account.",
+        "es": "Tu correo sigue a salvo en tu cuenta de Google."
+      }
+    },
+    "com.google.android.apps.maps": {
+      "label": "Google Maps",
+      "note": {
+        "en": "No maps or directions when you're out.",
+        "es": "Sin mapas ni indicaciones cuando estés fuera."
+      }
+    },
+    "com.android.camera": {
+      "label": "Camera",
+      "note": {
+        "en": "Photos you already took stay in the Gallery.",
+        "es": "Las fotos que ya tienes se quedan en la Galería."
+      }
+    },
+    "com.google.android.GoogleCamera": {
+      "label": "Google Camera",
+      "note": {
+        "en": "Photos you already took stay in the Gallery.",
+        "es": "Las fotos que ya tienes se quedan en la Galería."
+      }
+    },
+    "com.android.vending": {
+      "label": "Play Store",
+      "note": {
+        "en": "No installs or updates. To update WhatsApp later, bring it back from the Removed tab first.",
+        "es": "Sin instalar ni actualizar apps. Para actualizar WhatsApp más adelante, recupérala primero desde la pestaña Quitadas."
+      }
+    },
+    "com.sec.android.app.camera": {
+      "label": "Camera",
+      "note": {
+        "en": "Photos you already took stay in the Gallery.",
+        "es": "Las fotos que ya tienes se quedan en la Galería."
+      }
+    }
+  },
+  "known_names": {
+    "com.miui.gallery": "Gallery",
+    "com.google.android.apps.photos": "Google Photos",
+    "com.android.deskclock": "Clock",
+    "com.miui.calculator": "Calculator",
+    "com.miui.notes": "Notes",
+    "com.miui.weather2": "Weather",
+    "com.miui.compass": "Compass",
+    "com.miui.screenrecorder": "Screen Recorder",
+    "com.android.soundrecorder": "Recorder",
+    "com.miui.fm": "FM Radio",
+    "com.mi.android.globalFileexplorer": "File Manager",
+    "com.google.android.apps.nbu.files": "Files by Google",
+    "com.android.documentsui": "Files",
+    "com.android.thememanager": "Themes",
+    "com.xiaomi.scanner": "Scanner",
+    "com.google.android.contacts": "Contacts",
+    "com.google.android.calendar": "Google Calendar",
+    "com.xiaomi.calendar": "Calendar",
+    "com.google.android.apps.docs": "Google Drive",
+    "com.google.android.keep": "Google Keep",
+    "com.google.android.apps.wellbeing": "Digital Wellbeing",
+    "com.google.android.apps.walletnfcrel": "Google Wallet",
+    "com.google.android.apps.subscriptions.red": "Google One",
+    "com.google.android.apps.googleassistant": "Assistant",
+    "com.google.android.apps.adm": "Find My Device",
+    "com.android.providers.downloads.ui": "Downloads",
+    "com.google.android.apps.safetyhub": "Personal Safety",
+    "com.google.android.apps.chromecast.app": "Google Home",
+    "com.google.android.apps.fitness": "Google Fit",
+    "com.google.android.apps.translate": "Google Translate",
+    "com.google.android.apps.docs.editors.docs": "Google Docs",
+    "com.google.android.apps.docs.editors.sheets": "Google Sheets",
+    "com.google.android.apps.docs.editors.slides": "Google Slides",
+    "com.xiaomi.smarthome": "Mi Home",
+    "com.xiaomi.wearable": "Mi Fitness",
+    "com.mi.healthglobal": "Mi Health",
+    "com.miui.huanji": "Mi Mover",
+    "com.duokan.phone.remotecontroller": "Mi Remote",
+    "com.miui.backup": "Backup",
+    "com.miui.userguide": "User Guide",
+    "com.miui.virtualsim": "Mi Roaming",
+    "com.android.stk": "SIM Toolkit",
+    "com.microsoft.office.outlook": "Outlook",
+    "com.microsoft.office.officehubrow": "Microsoft 365",
+    "com.microsoft.skydrive": "OneDrive",
+    "org.telegram.messenger": "Telegram",
+    "org.thoughtcrime.securesms": "Signal",
+    "com.sec.android.app.myfiles": "My Files",
+    "com.sec.android.gallery3d": "Gallery",
+    "com.samsung.android.app.notes": "Samsung Notes",
+    "com.samsung.android.calendar": "Calendar",
+    "com.sec.android.app.clockpackage": "Clock",
+    "com.sec.android.app.popupcalculator": "Calculator",
+    "com.samsung.android.app.contacts": "Contacts",
+    "com.sec.android.app.voicenote": "Voice Recorder",
+    "com.samsung.android.app.watchmanager": "Galaxy Wearable",
+    "com.sec.android.app.shealth": "Samsung Health",
+    "com.samsung.android.spay": "Samsung Wallet",
+    "com.sec.android.easyMover": "Smart Switch",
+    "com.samsung.android.lool": "Device Care",
+    "com.sec.android.app.samsungapps": "Galaxy Store",
+    "com.samsung.android.themestore": "Galaxy Themes",
+    "com.sec.android.app.music": "Samsung Music",
+    "com.samsung.android.video": "Samsung Video",
+    "com.google.android.apps.recorder": "Recorder",
+    "com.google.android.apps.wallpaper": "Wallpaper & style",
+    "com.google.android.apps.pixel.creativeassistant": "Pixel Studio",
+    "com.google.android.deskclock": "Clock",
+    "com.google.android.calculator": "Calculator"
+  }
+}

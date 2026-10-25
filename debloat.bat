@@ -5,7 +5,8 @@ REM
 REM Usage: double-click, or run from cmd:  debloat.bat [--dry-run] [--yes] [--distractions-only]
 REM Tested on: Redmi Note 15 (HyperOS 2 / Android 15)
 REM
-REM What gets removed lives in lists\distractions.txt (Stage 1) and lists\xiaomi.txt (Stage 2).
+REM What gets removed lives in lists\distractions.txt (Stage 1, every phone) and
+REM lists\xiaomi.txt, lists\samsung.txt or lists\pixel.txt (Stage 2, picked by brand).
 REM Put a # in front of a line there to keep that app.
 REM
 REM Keep this file ASCII with Windows (CRLF) line endings - .gitattributes takes care of the endings.
@@ -14,7 +15,7 @@ REM Batch gotcha: never put a bare ) or ! inside echo text in this file.
 setlocal enabledelayedexpansion
 
 set "STAGE1_LIST=%~dp0lists\distractions.txt"
-set "STAGE2_LIST=%~dp0lists\xiaomi.txt"
+set "STAGE2_LIST="
 
 REM --- Options ---
 set "DRY_RUN=0"
@@ -38,7 +39,7 @@ call :print_usage
 exit /b 0
 :args_done
 
-for %%F in ("%STAGE1_LIST%" "%STAGE2_LIST%") do (
+for %%F in ("%STAGE1_LIST%") do (
     if not exist "%%~F" (
         echo [fail] Missing %%~F
         echo        Keep the lists folder next to debloat.bat.
@@ -64,9 +65,11 @@ set "PATH=%ADB_DIR%;%PATH%"
 :adb_found
 
 REM Removing these can break the phone. The script refuses even if you add them to a list.
-REM The second line is the essentials checked below.
+REM The second line is Phone and Messages: losing them can break calls, emergency calls too, and texts.
 set "PROTECTED=com.android.systemui com.android.settings com.android.phone com.google.android.gms com.google.android.webview com.miui.home com.mi.android.globallauncher com.miui.securitycenter"
-set "PROTECTED=%PROTECTED% com.whatsapp com.whatsapp.w4b com.google.android.gm com.google.android.apps.maps com.google.android.dialer com.android.contacts com.android.dialer com.google.android.apps.messaging com.android.mms com.android.camera com.google.android.GoogleCamera com.android.vending"
+set "PROTECTED=%PROTECTED% com.google.android.dialer com.android.contacts com.android.dialer com.samsung.android.dialer com.google.android.apps.messaging com.android.mms com.samsung.android.messaging"
+REM Launchers and in-call screens break navigation and calls; without a keyboard you cannot type your PIN after a restart.
+set "PROTECTED=%PROTECTED% com.sec.android.app.launcher com.google.android.apps.nexuslauncher com.android.incallui com.samsung.android.incallui com.samsung.android.kgclient com.google.android.inputmethod.latin com.samsung.android.honeyboard"
 
 REM --- Setup logging ---
 REM %date% depends on the region settings, so ask PowerShell for a sortable timestamp.
@@ -136,14 +139,17 @@ if not "%STATE%"=="device" (
 set "ANDROID_SERIAL=%SERIAL%"
 
 call :prop ro.product.manufacturer MANUFACTURER
-call :prop ro.product.model MODEL
+call :prop ro.product.marketname MODEL
+if not defined MODEL call :prop ro.product.model MODEL
 call :prop ro.build.version.release ANDROID_VERSION
 call :prop ro.build.version.incremental OS_VERSION
 echo [ok] Connected: !MANUFACTURER! !MODEL! - Android !ANDROID_VERSION!, !OS_VERSION!
-set "IS_XIAOMI=0"
-for %%M in (Xiaomi Redmi POCO) do if /i "!MANUFACTURER!"=="%%M" set "IS_XIAOMI=1"
-if "%IS_XIAOMI%"=="0" (
-    echo [info] Not a Xiaomi phone. Stage 1 still works, Stage 2 will mostly skip.
+set "BRAND="
+for %%M in (Xiaomi Redmi POCO) do if /i "!MANUFACTURER!"=="%%M" set "BRAND=Xiaomi" & set "STAGE2_LIST=%~dp0lists\xiaomi.txt"
+if /i "!MANUFACTURER!"=="samsung" set "BRAND=Samsung" & set "STAGE2_LIST=%~dp0lists\samsung.txt"
+if /i "!MANUFACTURER!"=="Google" set "BRAND=Google" & set "STAGE2_LIST=%~dp0lists\pixel.txt"
+if not defined BRAND (
+    echo [info] There's no list for !MANUFACTURER! phones yet. Stage 1 still works, Stage 2 is skipped.
     echo        See 'Adapting for Other Phones' in the README.
 )
 echo.
@@ -221,6 +227,7 @@ call :browser_check
 if "%DRY_RUN%"=="0" call :sanity_check
 
 if "%DISTRACTIONS_ONLY%"=="1" goto finish
+if not defined STAGE2_LIST goto finish
 if "%DRY_RUN%"=="1" goto stage2
 if "%ASSUME_YES%"=="1" goto stage2
 
@@ -242,10 +249,10 @@ pause >nul
 REM ============================================================
 echo.
 echo ================================================
-echo  STAGE 2: Removing Xiaomi bloatware
+echo  STAGE 2: Removing !BRAND! bloatware
 echo ================================================
 >>"%LOG_FILE%" echo.
->>"%LOG_FILE%" echo === STAGE 2: Xiaomi bloatware ===
+>>"%LOG_FILE%" echo === STAGE 2: !BRAND! bloatware ===
 
 call :run_list "%STAGE2_LIST%"
 if "%DRY_RUN%"=="0" call :sanity_check
@@ -301,7 +308,7 @@ echo Usage: debloat.bat [options]
 echo.
 echo   -n, --dry-run            Show what would be removed. Changes nothing on the phone.
 echo   -y, --yes                Don't pause between Stage 1 and Stage 2.
-echo       --distractions-only  Run Stage 1 only, skipping the Xiaomi bloatware.
+echo       --distractions-only  Run Stage 1 only, skipping the phone maker's bloatware.
 echo   -h, --help               Show this help.
 echo.
 echo More than one phone plugged in? Pick one first:  set ANDROID_SERIAL=your-serial
@@ -396,9 +403,9 @@ set "CHECK_MISSING=_"
 call :need "WhatsApp" com.whatsapp com.whatsapp.w4b
 call :need "Gmail" com.google.android.gm
 call :need "Google Maps" com.google.android.apps.maps
-call :need "Phone" com.google.android.dialer com.android.contacts com.android.dialer
-call :need "Messages" com.google.android.apps.messaging com.android.mms
-call :need "Camera" com.android.camera com.google.android.GoogleCamera
+call :need "Phone" com.google.android.dialer com.android.contacts com.android.dialer com.samsung.android.dialer
+call :need "Messages" com.google.android.apps.messaging com.android.mms com.samsung.android.messaging
+call :need "Camera" com.android.camera com.google.android.GoogleCamera com.sec.android.app.camera
 call :need "Play Store" com.android.vending
 exit /b
 

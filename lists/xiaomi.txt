@@ -1,6 +1,6 @@
 # Boring Phone — Stage 2: Xiaomi / Redmi / POCO bloatware
 #
-# Both debloat.sh and debloat.bat read this file.
+# Read by debloat.sh, debloat.bat, ui.py and the website when the phone is a Xiaomi, Redmi or POCO.
 # Format: <package>  <label>
 # To KEEP an app, put a # in front of its line.
 # Packages that aren't on your phone are skipped, so a long list is harmless.
@@ -70,6 +70,10 @@ com.booking                                Booking.com
 com.tripadvisor.tripadvisor                Tripadvisor
 com.amazon.appmanager                      Amazon device info provider
 com.opera.max.oem                          Opera Max
+cn.wps.moffice_eng                         WPS Office
+com.microsoft.skydrive                     OneDrive
+de.autodoc.gmbh                            Autodoc
+net.infojobs.mobile.android                InfoJobs
 
 ## Riskier — off by default. Remove the leading # to include them.
 # com.xiaomi.joyose                        Joyose (performance and thermal profiles; rated Expert, can affect refresh rate)

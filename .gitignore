@@ -5,3 +5,7 @@ redmi-debloat-logs/
 # OS junk
 .DS_Store
 Thumbs.db
+
+# Hosted site build (web/)
+web/node_modules/
+web/dist/

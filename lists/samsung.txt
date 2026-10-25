@@ -1,0 +1,66 @@
+# Boring Phone — Stage 2: Samsung Galaxy bloatware (One UI)
+#
+# Read by debloat.sh, debloat.bat, ui.py and the website when the phone is a Samsung.
+# Format: <package>  <label>
+# To KEEP an app, put a # in front of its line.
+# Packages that aren't on your phone are skipped, so a long list is harmless.
+# Labels: plain text only (no ! % ^ & | < > characters — they break the Windows script).
+#
+# Everything active below is rated "Recommended" (safe) by the Universal Android
+# Debloater community list: https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation
+# Samsung Internet, Samsung Free and Samsung TV Plus are in distractions.txt, with the other browsers and feeds.
+
+## Ads, tracking and diagnostics
+com.samsung.android.rubin.app              Customization Service (builds an ad profile from your usage)
+com.samsung.android.mfi                    Galaxy Widget (ads for Samsung apps)
+com.samsung.android.knox.analytics.uploader  Knox Analytics uploader
+com.sec.android.CcInfo                     CcInfo analytics
+com.samsung.android.mocca                  MoccaMobile diagnostics
+com.samsung.android.networkdiagnostic      Network Diagnostic
+com.samsung.logwriter                      LogWriter
+
+## Bixby
+com.samsung.android.bixby.agent            Bixby Voice
+com.samsung.android.bixby.wakeup           Bixby voice wake-up
+com.samsung.android.bixby.service          Bixby Service
+com.samsung.android.app.settings.bixby     Bixby settings
+com.samsung.systemui.bixby2                Bixby system UI
+com.samsung.android.visionintelligence     Bixby Vision
+com.samsung.android.bixbyvision.framework  Bixby Vision framework
+
+## Stores, tips and community
+com.samsung.ecomm                          Samsung Shop
+com.samsung.ecomm.global.in                Samsung Shop (India)
+com.sec.android.widgetapp.samsungapps      Galaxy Essentials widget
+com.samsung.android.voc                    Samsung Members
+com.samsung.oh                             Samsung Members (alt package)
+com.samsung.android.app.tips               Tips
+com.samsung.android.widgetapp.yahooedge.news   Yahoo News edge panel
+com.samsung.android.widgetapp.yahooedge.sport  Yahoo Sports edge panel
+com.samsung.android.widgetapp.yahooedge.finance  Yahoo Finance edge panel
+
+## Games
+com.samsung.android.game.gamehome          Game Launcher
+com.sec.android.game.gamehome              Game Launcher (old package)
+com.samsung.android.game.gametools         Game Booster
+
+## AR and camera extras
+com.samsung.android.arzone                 AR Zone
+com.samsung.android.aremoji                AR Emoji
+com.samsung.android.aremojieditor          AR Emoji Editor
+com.samsung.android.ardrawing              AR Doodle
+com.samsung.android.livestickers           Deco Pic
+com.samsung.android.visionarapps           AR apps
+
+## Misc
+com.samsung.android.kidsinstaller          Samsung Kids
+com.samsung.sree                           Samsung Global Goals
+com.sec.android.cloudagent.dropboxoobe     Dropbox offer stub
+
+## Partner apps preloaded by Samsung
+com.microsoft.skydrive                     OneDrive
+com.microsoft.office.officehubrow          Microsoft 365 (Office)
+com.booking                                Booking.com
+
+## Riskier — off by default. Remove the leading # to include them.
+# com.sec.android.app.samsungapps          Galaxy Store (rated Expert; Samsung Pay and some Samsung app updates need it)

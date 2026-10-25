@@ -1,0 +1,14 @@
+# Boring Phone — Stage 2: Google Pixel extras
+#
+# Read by debloat.sh, debloat.bat, ui.py and the website when the phone is a Pixel.
+# Format: <package>  <label>
+# To KEEP an app, put a # in front of its line.
+# Labels: plain text only (no ! % ^ & | < > characters — they break the Windows script).
+#
+# Pixels ship clean: YouTube, Google TV, YouTube Music, the Google app and Gemini are
+# already in distractions.txt, which does most of the work on a Pixel.
+# Everything active below is rated "Recommended" (safe) by the Universal Android Debloater list.
+
+## Google extras
+com.google.android.apps.tips               Pixel Tips
+com.google.android.apps.pixelmigrate       Data transfer tool (only used during setup)

@@ -4,16 +4,18 @@
 #
 # Usage: bash debloat.sh [--dry-run] [--yes] [--distractions-only]
 # Tested on: Redmi Note 15 (HyperOS 2 / Android 15)
-# Works on: Any Xiaomi / Redmi / POCO phone with MIUI or HyperOS
+# Works on: Xiaomi / Redmi / POCO (MIUI, HyperOS), Samsung Galaxy, Google Pixel.
+#           Other Android phones get Stage 1 only.
 #
-# What gets removed lives in lists/distractions.txt (Stage 1) and lists/xiaomi.txt (Stage 2).
+# What gets removed lives in lists/distractions.txt (Stage 1, every phone) and
+# lists/xiaomi.txt, lists/samsung.txt or lists/pixel.txt (Stage 2, picked by brand).
 # Put a # in front of a line there to keep that app.
 #
 # Written for bash 3.2 so it runs on the bash that ships with macOS.
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 STAGE1_LIST="$SCRIPT_DIR/lists/distractions.txt"
-STAGE2_LIST="$SCRIPT_DIR/lists/xiaomi.txt"
+STAGE2_LIST=""   # picked once we know the phone's brand
 
 # --- Options ---
 DRY_RUN=false
@@ -26,7 +28,7 @@ Usage: bash debloat.sh [options]
 
   -n, --dry-run            Show what would be removed. Changes nothing on the phone.
   -y, --yes                Don't pause between Stage 1 and Stage 2.
-      --distractions-only  Run Stage 1 only (skip the Xiaomi bloatware).
+      --distractions-only  Run Stage 1 only (skip the phone maker's bloatware).
   -h, --help               Show this help.
 
 More than one phone plugged in? Pick one:
@@ -44,13 +46,11 @@ for arg in "$@"; do
     esac
 done
 
-for list in "$STAGE1_LIST" "$STAGE2_LIST"; do
-    if [ ! -f "$list" ]; then
-        echo "❌ Missing $list"
-        echo "   Run the script from the boring-phone folder, with the lists/ folder next to it."
-        exit 1
-    fi
-done
+if [ ! -f "$STAGE1_LIST" ]; then
+    echo "❌ Missing $STAGE1_LIST"
+    echo "   Run the script from the boring-phone folder, with the lists/ folder next to it."
+    exit 1
+fi
 
 # --- Find ADB ---
 ADB=""
@@ -58,6 +58,8 @@ if command -v adb > /dev/null 2>&1; then
     ADB=adb
 else
     for candidate in \
+        /opt/homebrew/bin/adb \
+        /usr/local/bin/adb \
         "$HOME/platform-tools/adb" \
         "$HOME/platform-tools/adb.exe" \
         "$HOME/Library/Android/sdk/platform-tools/adb" \
@@ -83,20 +85,27 @@ prop() {
     adb_shell getprop "$1"
 }
 
-# --- Essentials: never removed, checked before and after each stage ---
+# --- Essentials: checked before and after each stage ---
+# None of them are on the lists. Phone and Messages are locked; the rest go only if you add them to a list.
 # Format: Name|package package ... (any one of them counts)
 ESSENTIALS='WhatsApp|com.whatsapp com.whatsapp.w4b
 Gmail|com.google.android.gm
 Google Maps|com.google.android.apps.maps
-Phone|com.google.android.dialer com.android.contacts com.android.dialer
-Messages|com.google.android.apps.messaging com.android.mms
-Camera|com.android.camera com.google.android.GoogleCamera
+Phone|com.google.android.dialer com.android.contacts com.android.dialer com.samsung.android.dialer
+Messages|com.google.android.apps.messaging com.android.mms com.samsung.android.messaging
+Camera|com.android.camera com.google.android.GoogleCamera com.sec.android.app.camera
 Play Store|com.android.vending'
 
-# Removing these can break the phone. The script refuses even if you add them to a list.
+# Removing these can stop the phone booting, or break calls (emergency calls too) and texts.
+# Launchers and in-call screens break navigation and calls; without a keyboard you can't type
+# your PIN after a restart; UAD says removing kgclient locks a Samsung. The script refuses
+# even if you add them to a list.
 PROTECTED=" com.android.systemui com.android.settings com.android.phone com.google.android.gms \
 com.google.android.webview com.miui.home com.mi.android.globallauncher com.miui.securitycenter \
-$(printf '%s\n' "$ESSENTIALS" | cut -d'|' -f2 | tr '\n' ' ') "
+com.sec.android.app.launcher com.google.android.apps.nexuslauncher com.android.incallui \
+com.samsung.android.incallui com.samsung.android.kgclient \
+com.google.android.inputmethod.latin com.samsung.android.honeyboard \
+$(printf '%s\n' "$ESSENTIALS" | grep -E '^(Phone|Messages)\|' | cut -d'|' -f2 | tr '\n' ' ') "
 
 is_protected() {
     case "$PROTECTED" in
@@ -169,16 +178,24 @@ esac
 export ANDROID_SERIAL="$SERIAL"
 
 MANUFACTURER=$(prop ro.product.manufacturer)
-MODEL=$(prop ro.product.model)
+MODEL=$(prop ro.product.marketname)   # Xiaomi's ro.product.model is a code like 2510DRA23E
+[ -z "$MODEL" ] && MODEL=$(prop ro.product.model)
 ANDROID_VERSION=$(prop ro.build.version.release)
 OS_VERSION=$(prop ro.build.version.incremental)   # HyperOS/MIUI build on Xiaomi, e.g. OS2.0.x.x
-echo "✅ Connected: $MANUFACTURER $MODEL — Android $ANDROID_VERSION ($OS_VERSION)"
+MAKER=$(printf '%s' "$MANUFACTURER" | awk '{ print toupper(substr($0, 1, 1)) substr($0, 2) }')   # Samsung says "samsung"
+echo "✅ Connected: $MAKER $MODEL — Android $ANDROID_VERSION ($OS_VERSION)"
 case "$MANUFACTURER" in
-    [Xx]iaomi|[Rr]edmi|POCO|[Pp]oco) ;;
+    [Xx]iaomi|[Rr]edmi|POCO|[Pp]oco) BRAND="Xiaomi";  STAGE2_LIST="$SCRIPT_DIR/lists/xiaomi.txt" ;;
+    [Ss]amsung)                      BRAND="Samsung"; STAGE2_LIST="$SCRIPT_DIR/lists/samsung.txt" ;;
+    [Gg]oogle)                       BRAND="Google";  STAGE2_LIST="$SCRIPT_DIR/lists/pixel.txt" ;;
     *)
-        echo "   ℹ️  Not a Xiaomi phone. Stage 1 still works; Stage 2 will mostly skip."
+        echo "   ℹ️  There's no list for $MANUFACTURER phones yet. Stage 1 still works; Stage 2 is skipped."
         echo "      See 'Adapting for Other Phones' in the README." ;;
 esac
+if [ -n "$STAGE2_LIST" ] && [ ! -f "$STAGE2_LIST" ]; then
+    echo "❌ Missing $STAGE2_LIST"
+    exit 1
+fi
 echo ""
 
 # --- Snapshot ---
@@ -455,7 +472,7 @@ run_list "$STAGE1_LIST"
 browser_check
 $DRY_RUN || sanity_check
 
-if ! $DISTRACTIONS_ONLY; then
+if ! $DISTRACTIONS_ONLY && [ -n "$STAGE2_LIST" ]; then
     if ! $DRY_RUN && ! $ASSUME_YES; then
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -475,10 +492,10 @@ if ! $DISTRACTIONS_ONLY; then
     # ============================================================
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "🟡 STAGE 2: Removing Xiaomi bloatware"
+    echo "🟡 STAGE 2: Removing $BRAND bloatware"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     log ""
-    log "=== STAGE 2: Xiaomi bloatware ==="
+    log "=== STAGE 2: $BRAND bloatware ==="
 
     run_list "$STAGE2_LIST"
     $DRY_RUN || sanity_check
