@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Boring Phone — a small local web page for picking what to remove.
+"""Clean Phone — a small local web page for picking what to remove.
 
 Usage: python3 ui.py [--port 8765] [--no-browser] [--adb /path/to/adb]
 
@@ -21,6 +21,7 @@ import webbrowser
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parent
 LIST_DIR = ROOT / "lists"
@@ -149,8 +150,13 @@ def brand_for(manufacturer):
 
 def lists_for(serial):
     """distractions.txt for every phone, plus the brand's own list when there is one."""
-    lists = [("distractions", LIST_DIR / "distractions.txt")]
     brand = brand_for(PROPS_CACHE.get(serial, {}).get("manufacturer", ""))
+    return lists_for_brand(brand["id"] if brand else None)
+
+
+def lists_for_brand(brand_id):
+    lists = [("distractions", LIST_DIR / "distractions.txt")]
+    brand = next((b for b in BRANDS if b["id"] == brand_id), None)
     if brand:
         lists.append((brand["id"], LIST_DIR / brand["list"]))
     return lists
@@ -181,7 +187,7 @@ def read_lists(lists):
 
 
 def logged_history():
-    """From every Boring Phone log (script or page): packages ever removed or disabled,
+    """From every log in ~/boring-phone-logs (script or page): packages ever removed or disabled,
     and packages whose latest attempt the phone refused."""
     removed, last = set(), {}
     logs = sorted(LOG_DIR.glob("*.log"), key=lambda p: p.stat().st_mtime) if LOG_DIR.exists() else []
@@ -205,7 +211,7 @@ def log(line, serial=None):
             if serial and not snapshot.exists():
                 snapshot.write_text("".join("package:%s\n" % p for p in sorted(package_set(serial))), encoding="utf-8")
             info = PROPS_CACHE.get(serial, {})
-            log_file.write_text("Boring Phone — page log\nTimestamp: %s\nDevice: %s %s (%s), Android %s, %s\n---\n" % (
+            log_file.write_text("Clean Phone — page log\nTimestamp: %s\nDevice: %s %s (%s), Android %s, %s\n---\n" % (
                 SESSION, info.get("manufacturer", ""), info.get("model", ""), serial,
                 info.get("android", ""), info.get("os", "")), encoding="utf-8")
         with log_file.open("a", encoding="utf-8") as f:
@@ -267,6 +273,23 @@ def phone_overview(serial):
             "essentials": essentials, "browsers": browsers(serial)}
 
 
+def preview(brand_id):
+    """A sample of what the page shows once a phone is connected, built from the lists alone:
+    a few well-known apps per group (APPS["preview"]), and how many more each group holds."""
+    picks = set(APPS["preview"]["common"]) | set(APPS["preview"].get(brand_id, []))
+    groups = []
+    for group in read_lists(lists_for_brand(brand_id)):
+        ticked = [app for app in group["apps"] if app["ticked"]]
+        sample = [app for app in ticked if app["package"] in picks]
+        if sample:
+            groups.append(dict(group, apps=sample, more=len(ticked) - len(sample)))
+    kept = [{"package": p, "label": KEPT[p][0], "note": KEPT[p][1], "ticked": False} for p in APPS["preview"]["kept"]]
+    groups.append({"stage": "kept", "title": "Your essentials", "note": "", "apps": kept, "more": 0})
+    browsers = ["com.android.chrome"] + [p for p in APPS["preview"].get(brand_id, []) if p in ("com.mi.globalbrowser", "com.sec.android.app.sbrowser")]
+    return {"preview": True, "groups": groups, "other": [], "removed": [], "browsers": browsers,
+            "essentials": [{"name": n, "installed": True, "locked": n in LOCKED_ESSENTIALS} for n, _ in ESSENTIALS]}
+
+
 def remove_app(serial, pkg, label):
     if pkg in PROTECTED:
         return {"status": "protected", "detail": "Protected — never removed."}
@@ -302,7 +325,7 @@ def restore_app(serial, pkg):
 # --- web server --------------------------------------------------------------
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "BoringPhone"
+    server_version = "CleanPhone"
 
     def log_message(self, fmt, *args):
         pass
@@ -336,6 +359,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.json({"error": "forbidden"}, 403)
         if self.path == "/api/status":
             return self.json(device_status())
+        if self.path.startswith("/api/preview"):
+            brand = parse_qs(urlparse(self.path).query).get("brand", [""])[0]
+            return self.json(preview(brand))
         if self.path == "/api/phone":
             serial = current_serial()
             if not serial:
@@ -365,7 +391,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     global ADB
-    parser = argparse.ArgumentParser(description="Boring Phone — pick what to remove, in your browser.")
+    parser = argparse.ArgumentParser(description="Clean Phone — pick what to remove, in your browser.")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--no-browser", action="store_true", help="don't open the browser")
     parser.add_argument("--adb", help="path to adb, if it's not on PATH or in ~/platform-tools")
@@ -385,14 +411,14 @@ def main():
         except OSError:
             continue
     url = "http://127.0.0.1:%d/" % server.server_address[1]
-    print("📱 Boring Phone is running at %s" % url)
+    print("📱 Clean Phone is running at %s" % url)
     print("   Keep this window open while you use it. Press Ctrl+C to quit.")
     if not args.no_browser:
         threading.Timer(0.5, webbrowser.open, [url]).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nBye. Your phone is as boring as you left it.")
+        print("\nBye. Your phone is as clean as you left it.")
     finally:
         server.server_close()
 

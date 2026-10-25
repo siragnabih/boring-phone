@@ -159,6 +159,49 @@
       }
     }
   },
+  "preview": {
+    "_comment": "Sample apps shown, behind a veil, before a phone is connected: the common ones plus the brand's.",
+    "common": [
+      "com.android.chrome",
+      "com.google.android.googlequicksearchbox",
+      "com.google.android.youtube",
+      "com.netflix.mediaclient",
+      "com.zhiliaoapp.musically",
+      "com.instagram.android",
+      "com.facebook.katana",
+      "com.king.candycrushsaga",
+      "com.einnovation.temu"
+    ],
+    "xiaomi": [
+      "com.mi.globalbrowser",
+      "com.miui.msa.global",
+      "com.miui.analytics",
+      "com.xiaomi.mipicks",
+      "com.mi.globalminusscreen",
+      "com.miui.videoplayer",
+      "com.xiaomi.gamecenter",
+      "com.booking"
+    ],
+    "samsung": [
+      "com.sec.android.app.sbrowser",
+      "com.samsung.android.rubin.app",
+      "com.samsung.android.bixby.agent",
+      "com.samsung.android.voc",
+      "com.samsung.android.game.gamehome",
+      "com.samsung.android.arzone",
+      "com.microsoft.skydrive"
+    ],
+    "pixel": [
+      "com.google.android.apps.tips",
+      "com.google.android.apps.pixelmigrate"
+    ],
+    "kept": [
+      "com.whatsapp",
+      "com.google.android.gm",
+      "com.google.android.apps.maps",
+      "com.android.vending"
+    ]
+  },
   "known_names": {
     "com.miui.gallery": "Gallery",
     "com.google.android.apps.photos": "Google Photos",

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boring Phone</title>
+<title>Clean Phone</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='4' width='24' height='24' rx='5' fill='%23f3efe6' stroke='%231f1c17' stroke-width='2.5'/%3E%3Cpath d='M10 10l12 12M22 10L10 22' stroke='%23b93a26' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -426,20 +426,95 @@
   }
   .brand-chip:hover { border-color: var(--ink-2); color: var(--ink); }
   .brand-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* --- preview before a phone is connected --- */
+  .preview-label {
+    margin: 46px 0 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .preview-label .badge {
+    flex: none;
+    font: 500 11px/1 var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 5px 9px 4px;
+  }
+  .previewing #facts { margin-top: 18px; }
+  .previewing #facts, .previewing #tabs, .previewing #tab-phone {
+    opacity: .5;
+    filter: saturate(.35);
+    user-select: none;
+  }
+  .previewing #tab-phone {
+    -webkit-mask-image: linear-gradient(#000 70%, transparent);
+    mask-image: linear-gradient(#000 70%, transparent);
+  }
+  .more-row { margin: 0; padding: 9px 0 2px 36px; font: 12.5px var(--mono); color: var(--ink-3); }
+
+  /* --- how it works --- */
+  .lang .how {
+    margin-right: 10px;
+    padding: 6px 0;
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .06em;
+    color: var(--ink-3);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .lang .how:hover { color: var(--ink); }
+  .connect .fine a { color: var(--ink-2); }
+  .about {
+    margin-top: 96px;
+    padding-top: 28px;
+    border-top: 1.5px solid var(--ink);
+    scroll-margin-top: 24px;
+  }
+  .about-kicker { margin: 0 0 12px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+  .about h2 { margin: 0; font: 400 clamp(34px, 6vw, 46px)/1.05 var(--serif); }
+  .about-intro { margin: 12px 0 0; color: var(--ink-2); max-width: 56ch; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 34px; margin-top: 34px; }
+  .about-grid h3 { margin: 0 0 6px; font: 600 15.5px/1.35 var(--sans); }
+  .about-grid p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  .about code { font: 12.5px var(--mono); background: var(--red-soft); padding: 1px 5px; border-radius: 4px; color: var(--ink); }
+  .about a { color: var(--ink); text-underline-offset: 3px; }
+  .about-sub { margin: 40px 0 10px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+  .about-list { margin: 0; padding-left: 18px; font-size: 14.5px; color: var(--ink-2); }
+  .about-list li { margin: 6px 0; }
+  .about-code { margin: 18px 0 0; font-size: 14.5px; color: var(--ink-2); }
+  .about-commands { margin-top: 26px; border-top: 1px solid var(--rule); padding-top: 14px; }
+  .about-commands summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+  .about-commands table { margin-top: 14px; border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  .about-commands td { padding: 7px 14px 7px 0; border-bottom: 1px dotted var(--rule); vertical-align: top; color: var(--ink-2); }
+  .about-commands td:first-child { white-space: nowrap; }
+  .about-commands p { font-size: 13.5px; color: var(--ink-3); }
+  @media (max-width: 600px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .about-commands td:first-child { white-space: normal; }
+    .lang .how { display: none; }
+  }
 </style>
 </head>
 <body>
 <main>
   <header class="reveal">
     <nav class="lang" aria-label="Language">
+      <a class="how" href="#about" data-i18n="nav.how"></a>
       <button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="es" lang="es">ES</button>
     </nav>
-    <p class="kicker">Boring Phone · Proyecto Vorágine</p>
+    <p class="kicker">Clean Phone · Proyecto Vorágine</p>
     <h1 data-i18n="title"></h1>
     <p class="device" id="device"><span class="dot wait"></span><span data-i18n="looking"></span></p>
   </header>
 
   <section class="connect reveal" id="connect" style="--i: 2" hidden></section>
+  <p class="preview-label" id="preview-label" hidden></p>
 
   <section class="facts reveal" id="facts" style="--i: 2" hidden>
     <div class="fact">
@@ -461,6 +536,8 @@
   <div id="notice"></div>
   <section id="tab-phone"></section>
   <section id="tab-removed" hidden></section>
+
+  <section class="about" id="about"></section>
 </main>
 
 <footer class="bar" id="bar" hidden>
@@ -548,7 +625,7 @@ const one = (n, single, many) => (n === 1 ? single : many);
 
 const I18N = {
   en: {
-    title: "Make it <em>boring.</em>",
+    title: "Make it <em>clean.</em>",
     looking: "Looking for your phone…",
     "fact.web": "Can it browse the web?",
     "fact.essentials": "Your essentials",
@@ -574,12 +651,12 @@ const I18N = {
     "chip.lockedTag": "locked",
     "toggle.off": "untick all",
     "toggle.on": "tick all",
-    empty: "Nothing from the lists is left on this phone. It's already boring.",
+    empty: "Nothing from the lists is left on this phone. It's already clean.",
     "more.title": ({ n }) => `${n} more ${one(n, "app", "apps")} with an icon, not on any list`,
     "more.note": "Mostly useful tools, left alone unless you tick them. Not sure what one is? Click its package name to see it on the Play Store.",
     "more.link": "See it on the Play Store",
     refused: "The phone refused to remove this last time.",
-    "removed.intro": "Everything Boring Phone took off this phone. Changed your mind? Bring it back.",
+    "removed.intro": "Everything Clean Phone took off this phone. Changed your mind? Bring it back.",
     "removed.hidden": "hidden, because the phone won't let it be removed",
     "removed.removed": "removed",
     "removed.empty": "Nothing removed yet.",
@@ -646,9 +723,9 @@ const I18N = {
     "c.noadb.after": ({ href }) => `Or download <a href="${href}">Platform Tools</a> and unzip it into your home folder. Then quit this page's window and start it again.`,
     "c.multiple.h": "One phone at a time.",
     "c.multiple.p": ({ list }) => `Several devices are connected (${list}). Unplug the ones you don't want to change.`,
-    "c.server.h": "The Boring Phone window is closed.",
+    "c.server.h": "The Clean Phone window is closed.",
     "c.server.p": "This page needs it running. Start it again with <code>python3 ui.py</code> in the boring-phone folder.",
-    "c.stale.h": "Boring Phone was restarted.",
+    "c.stale.h": "Clean Phone was restarted.",
     "c.stale.p": "Reload this page to reconnect.",
     "c.other.h": "The phone isn't ready.",
     "c.other.p": ({ state }) => `adb says it's <code>${state}</code>. Unplug it, plug it back in, and give it a few seconds.`,
@@ -663,9 +740,15 @@ const I18N = {
     "d.connecting": "Connecting",
     "d.unsupported": "Needs Chrome or Edge",
     "d.other": "Phone not ready",
+    "nav.how": "How it works",
+    "about.link": "What exactly does it do?",
+    "preview.label": "<span class=\"badge\">Preview</span> This is what you'll see once your phone is connected. Nothing is ticked or removed until then.",
+    "preview.bar": "<strong>Preview.</strong> Connect your phone to see its real apps.",
+    "preview.go.local": "Plug in your phone",
+    "preview.more": ({ n }) => `+ ${n} more`,
   },
   es: {
-    title: "Hazlo <em>aburrido.</em>",
+    title: "Déjalo <em>limpio.</em>",
     looking: "Buscando tu teléfono…",
     "fact.web": "¿Puede navegar por internet?",
     "fact.essentials": "Lo esencial",
@@ -691,12 +774,12 @@ const I18N = {
     "chip.lockedTag": "bloqueada",
     "toggle.off": "desmarcar todo",
     "toggle.on": "marcar todo",
-    empty: "No queda nada de las listas en este teléfono. Ya es aburrido.",
+    empty: "No queda nada de las listas en este teléfono. Ya está limpio.",
     "more.title": ({ n }) => `${n} ${one(n, "app más", "apps más")} con icono, fuera de las listas`,
     "more.note": "Casi todo son herramientas útiles y no se tocan salvo que las marques. ¿No sabes qué es alguna? Pulsa su nombre de paquete para verla en Play Store.",
     "more.link": "Verla en Play Store",
     refused: "El teléfono se negó a quitarla la última vez.",
-    "removed.intro": "Todo lo que Boring Phone ha quitado de este teléfono. ¿Has cambiado de idea? Recupéralo.",
+    "removed.intro": "Todo lo que Clean Phone ha quitado de este teléfono. ¿Has cambiado de idea? Recupéralo.",
     "removed.hidden": "oculta, porque el teléfono no deja quitarla",
     "removed.removed": "quitada",
     "removed.empty": "Todavía no has quitado nada.",
@@ -763,9 +846,9 @@ const I18N = {
     "c.noadb.after": ({ href }) => `O descarga <a href="${href}">Platform Tools</a> y descomprímelo en tu carpeta personal. Después cierra la ventana de esta página y vuelve a abrirla.`,
     "c.multiple.h": "Un teléfono cada vez.",
     "c.multiple.p": ({ list }) => `Hay varios dispositivos conectados (${list}). Desconecta los que no quieras cambiar.`,
-    "c.server.h": "La ventana de Boring Phone está cerrada.",
+    "c.server.h": "La ventana de Clean Phone está cerrada.",
     "c.server.p": "Esta página la necesita abierta. Vuelve a iniciarla con <code>python3 ui.py</code> en la carpeta boring-phone.",
-    "c.stale.h": "Boring Phone se ha reiniciado.",
+    "c.stale.h": "Clean Phone se ha reiniciado.",
     "c.stale.p": "Recarga esta página para volver a conectar.",
     "c.other.h": "El teléfono no está listo.",
     "c.other.p": ({ state }) => `adb dice que está <code>${state}</code>. Desconéctalo, vuelve a conectarlo y espera unos segundos.`,
@@ -780,6 +863,12 @@ const I18N = {
     "d.connecting": "Conectando",
     "d.unsupported": "Necesita Chrome o Edge",
     "d.other": "El teléfono no está listo",
+    "nav.how": "Cómo funciona",
+    "about.link": "¿Qué hace exactamente?",
+    "preview.label": "<span class=\"badge\">Vista previa</span> Esto es lo que verás cuando conectes el teléfono. No se marca ni se quita nada hasta entonces.",
+    "preview.bar": "<strong>Vista previa.</strong> Conecta tu teléfono para ver sus apps de verdad.",
+    "preview.go.local": "Conecta tu teléfono",
+    "preview.more": ({ n }) => `+ ${n} más`,
   },
 };
 
@@ -839,10 +928,115 @@ function tr(text) {
 const apps = (n) => t("apps", { n });
 const listOf = (items) => new Intl.ListFormat(lang).format(items);
 
+// "How it works": what the tool does, what it never does, and what it's built with.
+// hosted = the website (WebUSB); otherwise the local page served by ui.py.
+const REPO = "https://github.com/siragnabih/boring-phone";
+const UAD = "https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation";
+const COMMANDS = {
+  en: [
+    ["getprop ro.product.manufacturer …", "which phone this is"],
+    ["pm list packages [-d | -u]", "which apps are installed, disabled or removed"],
+    ["cmd package query-activities …", "which apps have an icon, and which open web links"],
+    ["pm uninstall -k --user 0 <app>", "remove an app for your user, keeping its data"],
+    ["pm disable-user --user 0 <app>", "hide an app the phone won't let you remove"],
+    ["cmd package install-existing <app>", "bring a removed app back"],
+    ["pm enable <app>", "bring a hidden app back"],
+  ],
+  es: [
+    ["getprop ro.product.manufacturer …", "qué teléfono es"],
+    ["pm list packages [-d | -u]", "qué apps están instaladas, desactivadas o quitadas"],
+    ["cmd package query-activities …", "qué apps tienen icono y cuáles abren enlaces web"],
+    ["pm uninstall -k --user 0 <app>", "quitar una app para tu usuario, conservando sus datos"],
+    ["pm disable-user --user 0 <app>", "ocultar una app que el teléfono no deja quitar"],
+    ["cmd package install-existing <app>", "recuperar una app quitada"],
+    ["pm enable <app>", "recuperar una app oculta"],
+  ],
+};
+const ABOUT = {
+  en: (hosted) => `
+    <p class="about-kicker">How it works</p>
+    <h2>What this does, exactly.</h2>
+    <p class="about-intro">Before you plug a phone into anything, you should know what happens. This is all of it.</p>
+    <div class="about-grid">
+      <div><h3>It uses a feature built into Android.</h3>
+        <p>USB debugging lets a computer send commands to a phone, but only after you tap <strong>Allow</strong> on the phone. It's meant for app developers, and every Android phone has it. Nothing is rooted, unlocked, or installed on the phone.</p></div>
+      <div><h3>It removes apps for your user only.</h3>
+        <p>It uses Android's own command for this, <code>pm uninstall --user 0</code>. The original stays inside the system, so every app can come back from the <em>Removed</em> tab, and a factory reset restores everything. If the phone refuses to remove an app, it's disabled instead.</p></div>
+      <div><h3>It can't touch what keeps the phone working.</h3>
+        <p>Phone, Messages, the keyboard, the home screen, Settings and Google Play Services are locked in the code, whatever the lists say. Nothing is removed until you press the button and confirm.</p></div>
+      ${hosted
+        ? `<div><h3>Nothing leaves this browser tab.</h3>
+          <p>The site is a handful of static files. Your phone talks to this page over USB, and nothing about it (its apps, what you remove) is sent anywhere. No accounts, analytics, cookies or trackers, and the fonts are served from this site too. The host, Vercel, sees that the page was loaded, like with any website.</p></div>
+          <div><h3>What your browser keeps.</h3>
+          <p>A key that tells your phone it's talking to this browser (that's what <strong>Allow</strong> approves), your language and phone brand, and a note of what was removed so the <em>Removed</em> tab works. It all stays in this browser. To withdraw access: Developer options → <strong>Revoke USB debugging authorizations</strong>.</p></div>`
+        : `<div><h3>Nothing leaves your computer.</h3>
+          <p>This page is served by <code>ui.py</code> on your own computer and talks to the phone through Google's <code>adb</code> tool. Nothing about your phone is sent anywhere, and every change is logged in <code>~/boring-phone-logs</code>. The only outside request is for the page's fonts, from Google Fonts.</p></div>
+          <div><h3>What your phone keeps.</h3>
+          <p>The key of this computer's adb, so it doesn't ask for <strong>Allow</strong> every time. To withdraw access: Developer options → <strong>Revoke USB debugging authorizations</strong>.</p></div>`}
+      <div><h3>When you're done, switch it off.</h3>
+        <p>Turn <strong>USB debugging</strong> off again in Developer options. It's safer, and it means nobody can undo this from a computer without unlocking the phone and switching it back on.</p></div>
+    </div>
+    <h3 class="about-sub">Built with</h3>
+    <ul class="about-list">
+      ${hosted
+        ? `<li><a href="https://tangoadb.dev">Tango</a> (ya-webadb), the open-source library that speaks adb to the phone over USB, right in the browser. MIT license.</li>
+          <li><a href="https://vite.dev">Vite</a>, which bundles the site. MIT license.</li>`
+        : `<li><a href="https://developer.android.com/tools/adb">adb</a>, Google's Android Debug Bridge, and Python's standard library. Nothing else to install.</li>`}
+      <li>App lists written by hand, guided by the safety ratings in the <a href="${UAD}">Universal Android Debloater</a> community list.</li>
+      <li>Fonts: Instrument Serif, Schibsted Grotesk and IBM Plex Mono, under the SIL Open Font License.</li>
+    </ul>
+    <p class="about-code">No frameworks, no trackers, and the code is open: <a href="${REPO}">github.com/siragnabih/boring-phone</a>. The part that talks to your phone is one file, <a href="${REPO}/blob/main/${hosted ? "web/src/webusb.js" : "ui.py"}">${hosted ? "webusb.js" : "ui.py"}</a>.</p>
+    ${commandsBlock("The exact commands it sends to the phone", "Nothing else is ever sent.")}`,
+  es: (hosted) => `
+    <p class="about-kicker">Cómo funciona</p>
+    <h2>Qué hace, exactamente.</h2>
+    <p class="about-intro">Antes de conectar un teléfono a cualquier cosa, deberías saber qué pasa. Aquí está todo.</p>
+    <div class="about-grid">
+      <div><h3>Usa una función que trae Android.</h3>
+        <p>La depuración USB permite que un ordenador envíe órdenes al teléfono, pero solo después de que toques <strong>Permitir</strong> en el teléfono. Está pensada para desarrolladores de apps y la tienen todos los Android. No se rootea, no se desbloquea ni se instala nada en el teléfono.</p></div>
+      <div><h3>Quita apps solo para tu usuario.</h3>
+        <p>Usa el propio comando de Android para esto, <code>pm uninstall --user 0</code>. El original se queda dentro del sistema, así que cualquier app se puede recuperar desde la pestaña <em>Quitadas</em>, y un restablecimiento de fábrica lo devuelve todo. Si el teléfono se niega a quitar una app, se desactiva en su lugar.</p></div>
+      <div><h3>No puede tocar lo que hace funcionar el teléfono.</h3>
+        <p>Teléfono, Mensajes, el teclado, la pantalla de inicio, Ajustes y Google Play Services están bloqueados en el propio código, digan lo que digan las listas. No se quita nada hasta que pulsas el botón y confirmas.</p></div>
+      ${hosted
+        ? `<div><h3>Nada sale de esta pestaña.</h3>
+          <p>La web son unos pocos archivos estáticos. Tu teléfono habla con esta página por USB y nada sobre él (sus apps, lo que quitas) se envía a ningún sitio. Sin cuentas, analíticas, cookies ni rastreadores, y las fuentes también se sirven desde esta web. El alojamiento, Vercel, ve que se ha cargado la página, como en cualquier web.</p></div>
+          <div><h3>Qué guarda tu navegador.</h3>
+          <p>Una clave que le dice a tu teléfono que está hablando con este navegador (eso es lo que aprueba <strong>Permitir</strong>), tu idioma y la marca de tu teléfono, y una nota de lo que se ha quitado para que funcione la pestaña <em>Quitadas</em>. Todo se queda en este navegador. Para retirar el acceso: Opciones de desarrollador → <strong>Revocar autorizaciones de depuración USB</strong>.</p></div>`
+        : `<div><h3>Nada sale de tu ordenador.</h3>
+          <p>Esta página la sirve <code>ui.py</code> en tu propio ordenador y habla con el teléfono mediante <code>adb</code>, la herramienta de Google. Nada sobre tu teléfono se envía a ningún sitio, y cada cambio queda registrado en <code>~/boring-phone-logs</code>. La única petición externa es la de las fuentes de la página, a Google Fonts.</p></div>
+          <div><h3>Qué guarda tu teléfono.</h3>
+          <p>La clave del adb de este ordenador, para no pedir <strong>Permitir</strong> cada vez. Para retirar el acceso: Opciones de desarrollador → <strong>Revocar autorizaciones de depuración USB</strong>.</p></div>`}
+      <div><h3>Cuando termines, apágalo.</h3>
+        <p>Vuelve a desactivar la <strong>depuración USB</strong> en las opciones de desarrollador. Es más seguro, y así nadie puede deshacer esto desde un ordenador sin desbloquear el teléfono y volver a activarla.</p></div>
+    </div>
+    <h3 class="about-sub">Hecho con</h3>
+    <ul class="about-list">
+      ${hosted
+        ? `<li><a href="https://tangoadb.dev">Tango</a> (ya-webadb), la librería de código abierto que habla adb con el teléfono por USB, directamente en el navegador. Licencia MIT.</li>
+          <li><a href="https://vite.dev">Vite</a>, que empaqueta la web. Licencia MIT.</li>`
+        : `<li><a href="https://developer.android.com/tools/adb">adb</a>, el Android Debug Bridge de Google, y la biblioteca estándar de Python. Nada más que instalar.</li>`}
+      <li>Listas de apps escritas a mano, guiadas por las valoraciones de seguridad de la lista comunitaria de <a href="${UAD}">Universal Android Debloater</a>.</li>
+      <li>Fuentes: Instrument Serif, Schibsted Grotesk e IBM Plex Mono, con licencia SIL Open Font License.</li>
+    </ul>
+    <p class="about-code">Sin frameworks ni rastreadores, y el código es abierto: <a href="${REPO}">github.com/siragnabih/boring-phone</a>. La parte que habla con tu teléfono es un solo archivo, <a href="${REPO}/blob/main/${hosted ? "web/src/webusb.js" : "ui.py"}">${hosted ? "webusb.js" : "ui.py"}</a>.</p>
+    ${commandsBlock("Las órdenes exactas que envía al teléfono", "No se envía nada más.")}`,
+};
+
+function commandsBlock(summary, after) {
+  const rows = COMMANDS[lang].map(([cmd, what]) => `<tr><td><code>${esc(cmd)}</code></td><td>${what}</td></tr>`).join("");
+  return `<details class="about-commands"><summary>${summary}</summary><table>${rows}</table><p>${after}</p></details>`;
+}
+
+function renderAbout() {
+  $("#about").innerHTML = ABOUT[lang](Boolean(backend()));
+}
+
 function applyStatic() {
   document.documentElement.lang = lang;
   for (const el of document.querySelectorAll("[data-i18n]")) el.innerHTML = t(el.dataset.i18n);
   for (const btn of document.querySelectorAll(".lang button")) btn.setAttribute("aria-pressed", btn.dataset.lang === lang);
+  renderAbout();
 }
 
 function setLang(next) {
@@ -902,7 +1096,7 @@ const CONNECT = {
       ${setupSteps()}
       <ol class="steps" start="4"><li>${t("step.connect")}</li></ol>
       ${connectButton()}
-      <p class="fine">${t("c.none.hosted.fine")} ${t("step.vary")}</p>`
+      <p class="fine">${t("c.none.hosted.fine")} <a href="#about">${t("about.link")}</a> ${t("step.vary")}</p>`
     : `<h2>${t("c.none.local.h")}</h2><p>${t("c.none.local.p")}</p>
       ${setupSteps()}
       <p>${t("c.none.local.after")}</p>
@@ -933,6 +1127,41 @@ function showConnect(status) {
   for (const id of ["#facts", "#tabs", "#tab-phone", "#tab-removed", "#bar"]) $(id).hidden = true;
   $("#notice").innerHTML = "";
   $("#device").innerHTML = `<span class="dot wait"></span><span>${t("d." + kind)}</span>`;
+  // Without the local server there's nothing to build a preview from.
+  if (kind !== "server" && kind !== "stale") showPreview();
+}
+
+const PREVIEW_PARTS = ["#facts", "#tabs", "#tab-phone", "#tab-removed"];
+
+// Before a phone is connected: the real layout, filled with sample apps from the lists,
+// behind a veil. Nothing in it can be clicked; the bottom button starts connecting instead.
+async function showPreview() {
+  if (state.previewBrand !== state.brand) {
+    try {
+      state.phone = await api("/api/preview?brand=" + state.brand);
+    } catch {
+      return;
+    }
+    state.previewBrand = state.brand;
+  }
+  // A phone may have connected while the preview was loading.
+  if (state.status.state === "device") return;
+  document.body.classList.add("previewing");
+  $("#preview-label").innerHTML = t("preview.label");
+  for (const id of ["#preview-label", "#facts", "#tabs", "#tab-phone", "#bar"]) $(id).hidden = false;
+  for (const id of PREVIEW_PARTS) $(id).inert = true;
+  state.tab = "phone";
+  renderFacts();
+  renderPhone();
+  renderRemoved();
+  selectTab("phone");
+}
+
+function endPreview() {
+  document.body.classList.remove("previewing");
+  $("#preview-label").hidden = true;
+  for (const id of PREVIEW_PARTS) $(id).inert = false;
+  state.previewBrand = null;
 }
 
 function showDevice(s) {
@@ -995,12 +1224,15 @@ async function poll() {
 // --- rendering ----------------------------------------------------------
 
 async function loadPhone() {
+  let phone;
   try {
-    state.phone = await api("/api/phone");
+    phone = await api("/api/phone");
   } catch (e) {
     $("#notice").innerHTML = `<p class="notice bad">${esc(e.message)}</p>`;
     return;
   }
+  endPreview();
+  state.phone = phone;
   $("#connect").hidden = true;
   $("#facts").hidden = false;
   $("#tabs").hidden = false;
@@ -1064,7 +1296,8 @@ function renderPhone(ticks) {
       html += `<div class="group"><div class="group-head reveal" style="--i:${i++}"><h2>${esc(tr(g.title))}</h2>
         ${g.note ? `<span class="group-note">${esc(tr(g.note))}</span>` : ""}
         ${kept ? "" : `<button class="group-toggle" type="button"></button>`}</div>
-        ${g.apps.map((a) => appRow(a, isTicked(a, a.ticked), Math.min(i++, 30), false, kept)).join("")}</div>`;
+        ${g.apps.map((a) => appRow(a, isTicked(a, a.ticked), Math.min(i++, 30), false, kept)).join("")}
+        ${g.more ? `<p class="more-row">${t("preview.more", { n: g.more })}</p>` : ""}</div>`;
     }
   }
   if (!groups.length) html += `<p class="empty">${t("empty")}</p>`;
@@ -1083,7 +1316,7 @@ function renderPhone(ticks) {
       updateCount();
     });
   }
-  $("#n-phone").textContent = groups.reduce((n, g) => n + g.apps.length, 0) + other.length;
+  $("#n-phone").textContent = state.phone.preview ? "" : groups.reduce((n, g) => n + g.apps.length, 0) + other.length;
   updateCount();
 }
 
@@ -1105,6 +1338,12 @@ function ticked() {
 }
 
 function updateCount() {
+  if (state.phone?.preview) {
+    $("#bar-text").innerHTML = t("preview.bar");
+    $("#go").disabled = false;
+    $("#go").textContent = backend() ? t("connect") : t("preview.go.local");
+    return;
+  }
   const n = ticked().length;
   $("#bar-text").innerHTML = t("bar.text", { apps: apps(n), n });
   $("#go").disabled = n === 0 || state.busy;
@@ -1203,6 +1442,12 @@ for (const btn of document.querySelectorAll(".tabs button")) btn.addEventListene
 for (const btn of document.querySelectorAll(".lang button")) btn.addEventListener("click", () => setLang(btn.dataset.lang));
 $("#tab-phone").addEventListener("change", updateCount);
 $("#go").addEventListener("click", () => {
+  if (state.phone?.preview) {
+    // The website can open the browser's USB picker right away; the local page waits for a cable.
+    if (backend()) backend().connect();
+    else $("#connect").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
   const n = ticked().length;
   $("#confirm-title").textContent = t("dialog.title", { apps: apps(n), model: state.model });
   const kept = ticked().filter((b) => "kept" in b.dataset).map((b) => tr(b.dataset.label));
@@ -1230,6 +1475,7 @@ applyStatic();
 // The hosted backend is a module script, which runs after this one but before DOMContentLoaded.
 document.addEventListener("DOMContentLoaded", () => {
   if (backend()) backend().onChange = poll;
+  renderAbout();
   poll();
 });
 </script>

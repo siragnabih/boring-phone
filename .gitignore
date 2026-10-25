@@ -13,3 +13,6 @@ web/dist/
 
 # Local tool settings (Claude Code test setup) — never publish
 .claude/
+
+# Python bytecode
+__pycache__/

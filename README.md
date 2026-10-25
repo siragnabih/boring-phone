@@ -129,9 +129,11 @@ Prefer ticking boxes to editing text files? Run the page instead of the script:
 python3 ui.py
 ```
 
-On a Mac you can also double-click **Boring Phone.command** in Finder (the first time, right-click → Open, because macOS is wary of downloaded scripts).
+On a Mac you can also double-click **Clean Phone.command** in Finder (the first time, right-click → Open, because macOS is wary of downloaded scripts).
 
-It opens a page in your browser that:
+It opens a page in your browser, called **Clean Phone** (a friendlier name for people setting up a phone for someone else, like a teenager), that:
+
+- shows, before you plug anything in, a preview of what you'll see, behind a veil, so you know what you're getting into
 
 - shows the apps it finds **on your phone**, grouped like the lists, with the recommended ones already ticked
 - tells you whether the phone **can still browse the web**, and through which app
@@ -307,7 +309,8 @@ The same page also works as a website, with nothing to install: no adb, no Pytho
 
 - **Browsers:** Chrome, Edge, Brave, or Opera on a computer. Safari and Firefox can't talk to USB devices; the page says so and points to the [local version](#4-the-easy-way-pick-apps-in-your-browser).
 - **If adb is installed on the computer**, run `adb kill-server` first: only one program can use the phone's debugging connection at a time.
-- **Nothing is uploaded.** The site is static files; all the work happens in the browser tab. The browser keeps its own debugging key (so "Always allow" sticks) and a note of what it removed, for the *Removed* tab.
+- **Nothing is uploaded.** The site is static files; all the work happens in the browser tab. It loads nothing from other sites: even its fonts are served by the site itself. The browser keeps its own debugging key (so "Always allow" sticks) and a note of what it removed, for the *Removed* tab.
+- **It explains itself.** A *How it works* section, linked from the top of the page, says in plain words what the tool does and never does, lists the exact commands it sends to the phone, and names every library it uses and its license.
 - **English and Spanish.** The page picks the language from the browser's settings, and the EN · ES switch in the corner remembers a choice. Before a phone is connected, a "My phone:" switch shows the Developer options steps for Xiaomi, Samsung, Pixel, or other phones. The local page (`ui.py`) gets the same, since it's the same page.
 
 The code is in [`web/`](web/): it builds [`ui/index.html`](ui/index.html), the same page `ui.py` serves, plus [`web/src/webusb.js`](web/src/webusb.js), which does what `ui.py` does but over WebUSB. Both read the same [`lists/`](lists/) and [`ui/apps.json`](ui/apps.json).

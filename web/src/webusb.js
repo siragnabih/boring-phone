@@ -1,4 +1,4 @@
-// Boring Phone, hosted: the same page as ui/index.html, but instead of asking ui.py
+// Clean Phone, hosted: the same page as ui/index.html, but instead of asking ui.py
 // it talks to the phone itself over WebUSB (Chrome, Edge, Brave, Opera).
 // It answers the same /api/* requests ui.py does, so the page doesn't need to know the difference.
 
@@ -47,7 +47,7 @@ const PROTECTED = new Set([
 ]);
 
 const manager = AdbDaemonWebUsbDeviceManager.BROWSER;
-const credentials = new AdbWebCredentialStore("Boring Phone");
+const credentials = new AdbWebCredentialStore("Clean Phone");
 let status = manager ? { state: "none" } : { state: "unsupported" };
 let adb = null;
 let usbDevice = null;
@@ -172,7 +172,11 @@ function splitNote(text) {
 // distractions.txt for every phone, plus the brand's own list when there is one.
 function listsForPhone() {
   const maker = (status.manufacturer || "").toLowerCase();
-  const brand = APPS.brands.find((b) => b.manufacturers.includes(maker));
+  return listsForBrand(APPS.brands.find((b) => b.manufacturers.includes(maker))?.id);
+}
+
+function listsForBrand(brandId) {
+  const brand = APPS.brands.find((b) => b.id === brandId);
   return [["distractions", distractions], ...(brand ? [[brand.id, LIST_FILES[brand.list]]] : [])];
 }
 
@@ -221,7 +225,7 @@ function history() {
 }
 
 function remember(pkg, action) {
-  console.info(`Boring Phone: ${action} ${pkg}`);
+  console.info(`Clean Phone: ${action} ${pkg}`);
   try {
     localStorage.setItem("boring-phone:" + status.serial, JSON.stringify({ ...history(), [pkg]: action }));
   } catch {
@@ -279,6 +283,23 @@ async function phoneOverview() {
   return { groups: shown, other, removed, essentials, browsers };
 }
 
+// A sample of what the page shows once a phone is connected, built from the lists alone:
+// a few well-known apps per group (APPS.preview), and how many more each group holds.
+function preview(brandId) {
+  const picks = new Set([...APPS.preview.common, ...(APPS.preview[brandId] || [])]);
+  const groups = [];
+  for (const group of readLists(listsForBrand(brandId))) {
+    const ticked = group.apps.filter((a) => a.ticked);
+    const sample = ticked.filter((a) => picks.has(a.package));
+    if (sample.length) groups.push({ ...group, apps: sample, more: ticked.length - sample.length });
+  }
+  const kept = APPS.preview.kept.map((p) => ({ package: p, label: APPS.kept[p].label, note: APPS.kept[p].note, ticked: false }));
+  groups.push({ stage: "kept", title: "Your essentials", note: "", apps: kept, more: 0 });
+  const browsers = ["com.android.chrome", ...(APPS.preview[brandId] || []).filter((p) => ["com.mi.globalbrowser", "com.sec.android.app.sbrowser"].includes(p))];
+  const essentials = APPS.essentials.map((e) => ({ name: e.name, installed: true, locked: LOCKED.has(e.name) }));
+  return { preview: true, groups, other: [], removed: [], browsers, essentials };
+}
+
 async function removeApp(pkg) {
   if (PROTECTED.has(pkg)) return { status: "protected", detail: "Protected — never removed." };
   const out = (await sh(`pm uninstall -k --user 0 ${pkg}`)).trim();
@@ -294,7 +315,7 @@ async function removeApp(pkg) {
     return { status: "disabled" };
   }
   remember(pkg, "FAILED");
-  console.warn(`Boring Phone: ${pkg} refused.`, { uninstall: out, disable: disableOut });
+  console.warn(`Clean Phone: ${pkg} refused.`, { uninstall: out, disable: disableOut });
   return { status: "failed", detail: out || disableOut };
 }
 
@@ -312,6 +333,7 @@ async function restoreApp(pkg) {
 
 async function request(path, body) {
   if (path === "/api/status") return status;
+  if (path.startsWith("/api/preview")) return preview(new URL(path, location.href).searchParams.get("brand"));
   if (!adb || status.state !== "device") throw new Error("No phone connected.");
   if (path === "/api/phone") return { ...(await phoneOverview()), serial: status.serial };
   const pkg = String(body?.package ?? "");
