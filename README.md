@@ -322,8 +322,9 @@ The code is in [`web/`](web/): it builds [`ui/index.html`](ui/index.html), the s
 To work on it locally:
 
 ```bash
-npm --prefix web install
-npm --prefix web run dev
+cd web
+npm install
+npm run dev
 ```
 
 ## Turning Off the Ads ADB Can't Reach
